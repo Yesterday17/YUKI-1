@@ -14,8 +14,9 @@
 
 <template>
   <v-app id="app">
-    <div id="top" v-if="showTitlebar">
-      <yk-titlebar></yk-titlebar>
+    <div id="top" v-if="showTitlebar || showSmallTitlebar">
+      <yk-titlebar v-if="showTitlebar" style="position: fixed"></yk-titlebar>
+      <yk-titlebar v-else-if="showSmallTitlebar" style="position: absolute"></yk-titlebar>
     </div>
     <div id="content" :style="{marginTop: showTitlebar ? '32px' : '0'}">
       <div id="buttons-top" class="buttons" v-if="isButtonsShown && isWindowTooHigh">
@@ -69,7 +70,11 @@ export default class App extends Vue {
   }
 
   get showTitlebar () {
-    return !this.getAutoHideTitlebar() || this.isButtonsShown
+    return !this.getAutoHideTitlebar()
+  }
+
+  get showSmallTitlebar() {
+    return this.getAutoHideTitlebar() && this.isButtonsShown
   }
 
   get currentId () {
@@ -78,6 +83,7 @@ export default class App extends Vue {
   get currentOriginText () {
     return this.getTextByHandleAndId(this.currentIndex, this.currentId)
   }
+
   @namespace('View').State('isButtonsShown') public isButtonsShown!: boolean
   @namespace('View').State('isWindowTooHigh') public isWindowTooHigh!: boolean
   @namespace('Config').Getter('getAutoHideTitlebar')
@@ -233,10 +239,10 @@ body {
 }
 
 #app #top {
-  position: fixed;
   width: 100%;
   z-index: 999;
   top: 0;
+  right: 0;
 }
 
 #app #content #buttons-top {
