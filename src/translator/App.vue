@@ -276,4 +276,13 @@ body {
   overflow-x: hidden;
   overflow-y: scroll;
 }
+
+.fixed-scroll::-webkit-scrollbar {
+  width: 8px;
+  background-color: rgba(255, 255, 255, .8);
+}
+
+.fixed-scroll::-webkit-scrollbar-thumb {
+  background-color: grey;
+}
 </style>
