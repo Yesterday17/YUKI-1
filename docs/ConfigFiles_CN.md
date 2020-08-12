@@ -10,95 +10,95 @@ YUKI 的配置文件存放在程序主目录下的 config 子目录下，分为�
 
 - 在下载更新版本的 YUKI 后，如果没有说明配置文件存在「破坏性更新」，则可以直接将原来的 config 目录直接复制到新的程序目录下，正常运行即可恢复以前的配置
 - 由于程序中部分功能不检查配置文件中是否存在所需的项，因此尽量**不要删除配置文件中的项**，有可能会导致程序出错。请尽量只进行项的添加或修改
-- 每次修改配置文件后需要重启 YUKI（此项不适用于自定义翻译 API 的 JS 文件，因为程序具有修改 JS 文件后保存即重新加载的功能，当然以后可能会对 JSON 文件添加同样的功能）
-- 如果某一翻译 API 失效，且最新版本的 YUKI 修复了该 API，则应重新生成默认 config.json 并替换 onlineApis 对象（后面有详解）。
+- 每次修改配置文件后需要重启 YUKI（此项不适用于自定义翻译 API 的 JS 文件，因为程序具有修改 JS 文件后保存即重新加载的功能，当然以后可能会对 YAML 文件添加同样的功能）
+- 如果某一翻译 API 失效，且最新版本的 YUKI 修复了该 API，则应重新生成默认 config.yaml 并替换 onlineApis 对象（后面有详解）。
 
-### 与 JSON 文件格式有关的几个注意事项
+### 与 YAML 文件格式有关的几个注意事项
 
-由于 YUKI 不验证配置文件的「合法性」（即是否存在违犯 JSON 语法规范的配置文件写法），偏偏 JSON 想要不写错又比较的困难，因此需要特别指出， JSON 语法规定：
+与之前版本使用的 JSON 文件格式相比，YAML 的书写较为简单。
 
-- 不允许存在注释，即不能使用`//`或`/**/`
-- 任何非数字和布尔类型的值均为字符串类型，必须使用`""`（双引号）包括，而非`''`（单引号）
-- 任何在字符串值中出现的`"`（双引号）必须使用转义字符`\`（反斜杠），例如`"\""`表示仅有一个双引号的字符串。`\`（反斜杠）自身则需要表示为`\\`。在后续的配置文件中，我们会发现大量使用转义字符描述的场合。
+- YAML 允许存在注释，通过 `#` 可以创建单行注释
+- 字符串类型可以使用单引号或双引号
+- 如果表示字符串时使用了单引号，则字符串值中出现的`'`（单引号）必须使用转义字符`\`（反斜杠）。双引号同。
 
-如果对自己没有自信的话，请使用支持显示 JSON 语法错误的文本编辑器，如[Visual Studio Code](https://code.visualstudio.com/)。
+## config.yaml
 
-## config.json
-
-config.json 是程序最基本的配置文件，包含一系列跟程序运行有关的配置项和一些无法拆分为单独 JSON 文件的杂项。
+config.yaml 是程序最基本的配置文件，包含一系列跟程序运行有关的配置项和一些无法拆分为单独 YAML 文件的杂项。
 
 ### 默认配置文件（以 v0.9.1 为例，后续可能发生变化，下同）
 
-```json
-{
-  "localeChangers": {
-    "localeEmulator": {
-      "name": "Locale Emulator",
-      "enable": false,
-      "exec": ""
-    },
-    "ntleas": {
-      "name": "Ntleas",
-      "enable": false,
-      "exec": ""
-    },
-    "noChanger": {
-      "name": "No Changer",
-      "enable": true,
-      "exec": "%GAME_PATH%"
-    }
-  },
-  "onlineApis": [
-    {
-      "enable": false,
-      "external": true,
-      "jsFile": "config\\hjdictApi.js",
-      "name": "沪江"
-    },
-    {
-      "enable": true,
-      "external": true,
-      "jsFile": "config\\hjdictApi.js",
-      "name": "有道"
-    },
-    {
-      "enable": true,
-      "method": "POST",
-      "name": "谷歌",
-      "requestBodyFormat": "X{\"q\": %TEXT%, \"sl\": \"ja\", \"tl\": \"zh-CN\"}",
-      "responseBodyPattern": "Rclass=\"t0\">([^<]*)<",
-      "url": "https://translate.google.cn/m"
-    },
-    {
-      "enable": true,
-      "method": "POST",
-      "name": "彩云",
-      "requestBodyFormat": "J{\"source\": %TEXT%, \"trans_type\": \"ja2zh\", \"request_id\": \"demo\", \"detect\": \"true\"}",
-      "requestHeaders": "{\"X-Authorization\": \"token 3975l6lr5pcbvidl6jl2\"}",
-      "responseBodyPattern": "J%RESPONSE%.target",
-      "url": "https://api.interpreter.caiyunai.com/v1/translator"
-    },
-    {
-      "enable": true,
-      "external": true,
-      "jsFile": "config\\qqApi.js",
-      "name": "腾讯"
-    }
-  ],
-  "translators": {
-    "jBeijing": {
-      "enable": false,
-      "path": "",
-      "dictPath": ""
-    }
-  },
-  "mecab": {
-    "enable": false,
-    "path": ""
-  },
-  "librariesRepoUrl": "https://github.com/project-yuki/libraries/raw/master/_pack/",
-  "language": "zh"
-}
+```yaml
+localeChangers:
+  alphaROMdiE:
+    enable: false
+    exec: 'C:\Resources\Games\AlphaROMdiE.exe %GAME_PATH%'
+    name: AlphaROMdiE
+  localeEmulator:
+    enable: true
+    exec: 'C:\LocaleEmulator\LEProc.exe %GAME_PATH%'
+    name: Locale Emulator
+  noChanger:
+    enable: false
+    exec: '%GAME_PATH%'
+    name: No Changer
+  ntleas:
+    enable: false
+    exec: 'C:\ntleas046_x64\x86\ntleas.exe %GAME_PATH%'
+    name: Ntleas
+onlineApis:
+  - enable: true
+    external: true
+    jsFile: config\qqApi.js
+    name: 腾讯
+  - enable: false
+    external: true
+    jsFile: config\tencentApi.js
+    name: 腾讯云
+  - enable: true
+    external: true
+    jsFile: config\youdaoApi.js
+    name: 有道
+  - enable: false
+    method: POST
+    name: 谷歌
+    requestBodyFormat: 'X{"q": %TEXT%, "sl": "ja", "tl": "zh-CN"}'
+    responseBodyPattern: 'Rclass="t0">([^<]*)<'
+    url: 'https://translate.google.cn/m'
+  - enable: false
+    method: POST
+    name: 彩云
+    requestBodyFormat: >-
+      J{"source": %TEXT%, "trans_type": "ja2zh", "request_id": "demo", "detect":
+      "true"}
+    requestHeaders: '{"X-Authorization": "token 3975l6lr5pcbvidl6jl2"}'
+    responseBodyPattern: J%RESPONSE%.target
+    url: 'https://api.interpreter.caiyunai.com/v1/translator'
+  - enable: false
+    external: true
+    jsFile: config\azureApi.js
+    name: Azure
+  - enable: false
+    external: true
+    jsFile: config\baiduApi.js
+    name: 百度
+  - enable: false
+    external: true
+    jsFile: config\newBaiduApi.js
+    name: 百度开放平台
+translators:
+  jBeijing:
+    dictPath: 'C:\YUKI\yuki\lib\dict\jb'
+    enable: true
+    path: 'C:\JBeijing7'
+dictionaries:
+  lingoes:
+    enable: true
+    path: 'C:\YUKI\libraries\dict\lingoes\njcd.db'
+mecab:
+  enable: true
+  path: 'C:\YUKI\libraries\pos\mecab-ipadic'
+librariesRepoUrl: 'https://github.com/project-yuki/libraries/raw/master/_pack/'
+language: zh
 ```
 
 ### .localeChangers
@@ -205,16 +205,14 @@ MeCab 所在的目录。注意，该目录下应包含 libmecab.dll。
 
 翻译器的显示语言。可选项为简体中文（zh）或英文（en）。
 
-## games.json
+## games.yaml
 
-games.json 存放着所有与游戏相关的信息。
+games.yaml 存放着所有与游戏相关的信息。
 
 ### 默认配置文件
 
-```json
-{
-  "games": []
-}
+```yaml
+games: []
 ```
 
 ### .games
@@ -237,51 +235,47 @@ games.json 存放着所有与游戏相关的信息。
 
 游戏使用的特殊码。具体细节请参考 [Textractor](https://github.com/Artikash/Textractor) 实现。Textractor 本身兼容 VNR 特殊码。
 
-## gui.json
+## gui.yaml
 
-gui.json 保存与翻译器窗口位置和颜色有关的显示信息。
+gui.yaml 保存与翻译器窗口位置和颜色有关的显示信息。
 
 由于翻译器内配置该部分的功能较为完备，因此不建议直接修改此配置文件。
 
-如果翻译器窗口「跑飞了」，可以删除 gui.json 以恢复其默认位置。
+如果翻译器窗口「跑飞了」，可以删除 gui.yaml 以恢复其默认位置。
 
 ### 默认配置文件
 
-```json
-{
-  "mainWindow": {
-    "bounds": {
-      "x": 第一次运行时计算,
-      "y": 第一次运行时计算,
-      "width": 第一次运行时计算,
-      "height": 第一次运行时计算
-    }
-  },
-  "translatorWindow": {
-    "bounds": {
-      "width": 第一次运行时计算,
-      "height": 第一次运行时计算,
-      "x": 第一次运行时计算,
-      "y": 第一次运行时计算
-    },
-    "alwaysOnTop": true,
-    "originalText": {
-      "fontSize": 24,
-      "color": "white"
-    },
-    "translationText": {
-      "fontSize": 18,
-      "color": "white",
-      "margin": 18
-    },
-    "background": "#000000BD"
-  }
-}
+```yaml
+mainWindow:
+  bounds:
+    width: 第一次运行时计算
+    height: 第一次运行时计算
+    x: 第一次运行时计算
+    'y': 第一次运行时计算
+translatorWindow:
+  bounds:
+    width: 第一次运行时计算
+    height: 第一次运行时计算
+    x: 第一次运行时计算
+    'y': 第一次运行时计算
+  alwaysOnTop: true
+  originalText:
+    fontSize: 24
+    color: white
+  translationText:
+    fontSize: 18
+    color: white
+    margin: 18
+  background: '#000000BD'
+  renderMode: translucent
+  mecab:
+    showRomaji: false
+  autoHideTitlebar: false
 ```
 
-## texts.json
+## texts.yaml
 
-texts.json 保存着所有与翻译文本有关的中间件（Middlewares）的配置信息。
+texts.yaml 保存着所有与翻译文本有关的中间件（Middlewares）的配置信息。
 
 中间件的执行顺序为：
 
@@ -291,30 +285,26 @@ Merger -> Interceptor -> Modifier -> Mecab（如果启用的话）-> Filter -> P
 
 ### 默认配置文件
 
-```json
-{
-  "interceptor": {
-    "shouldBeIgnore": [
-      "value",
-      "sys",
-      "\u00020",
-      "windowbtn",
-      "00_プロローグ１",
-      "menu",
-      "WndDisp"
-    ],
-    "ignoreAsciiOnly": false,
-    "maxLength": 1000
-  },
-  "modifier": {
-    "removeAscii": false,
-    "deduplicate": false
-  },
-  "merger": {
-    "enable": true,
-    "timeout": 500
-  }
-}
+```yaml
+interceptor:
+  shouldBeIgnore:
+    - value
+    - sys
+    - "\x020"
+    - windowbtn
+    - 00_プロローグ１
+    - menu
+    - WndDisp
+  ignoreAsciiOnly: false
+  maxLength: 1000
+modifier:
+  removeAscii: false
+  deduplicate: false
+  deduplicateCount: 0
+  delineBreak: false
+merger:
+  enable: true
+  timeout: 500
 ```
 
 ### .merger
@@ -358,3 +348,9 @@ Merger -> Interceptor -> Modifier -> Mecab（如果启用的话）-> Filter -> P
 去除文本中出现的**任何**重复片段，以最大可能性进行匹配。
 
 因为文本去重功能可能会修改语句本身的语义，因此仅当没有其他任何手段时作为最后的文本修正手段使用。
+
+#### deduplicateCount
+
+去除文本中出现叠字的次数，根据用户的需要进行匹配。
+
+如 deduplicateCount 为 1，则可以减少一次叠字，如 `11122` 会被替换为 `112`。

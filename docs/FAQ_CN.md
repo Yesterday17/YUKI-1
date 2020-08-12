@@ -39,7 +39,7 @@ YUKI 相比 VNR，有如下优点：
 
 ### 如何开启/关闭某一翻译 API？
 
-请参照 [config.json 配置详解](/docs/ConfigFiles_CN.md#configjson)，修改各个 onlineApi 的 enable 属性为 true/false，重启 YUKI 即可。
+请参照 [config.yaml 配置详解](/docs/ConfigFiles_CN.md#configyaml)，修改各个 onlineApi 的 enable 属性为 true/false，重启 YUKI 即可。
 
 ### 某些翻译 API 经常挂掉？
 
@@ -51,7 +51,7 @@ YUKI 相比 VNR，有如下优点：
 
 ### 如何去除文本中出现的叠字（如变 AAABBBCCC 为 ABC）？
 
-请参照 [text.json 配置详解](/docs/ConfigFiles_CN.md#textsjson)，修改 deduplicate 属性为 true，重启 YUKI 即可。
+请参照 [text.yaml 配置详解](/docs/ConfigFiles_CN.md#textsyaml)，修改 deduplicate 属性为 true，重启 YUKI 即可。
 
 ### 怎样调整翻译窗口透明度？
 
@@ -59,7 +59,7 @@ YUKI 相比 VNR，有如下优点：
 
 ### 翻译窗口有一层毛玻璃效果，怎样去除？
 
-修改 gui.json 文件中的 translatorWindow.renderMode 为 transparent，重启 YUKI 即可。
+修改 gui.yaml 文件中的 translatorWindow.renderMode 为 transparent，重启 YUKI 即可。
 
 ### 我要快进一段剧情，怎样不让 YUKI 翻译快进部分的文本？
 
@@ -100,6 +100,6 @@ YUKI 相比 VNR，有如下优点：
 
 ### 我自己编写了一个可以使用的外部 API，怎样提供给他人使用？
 
-由于外部 API 文件独立于主程序之外，可以直接将分发出去，他人设置好 config.json 中对应的属性，即可正常使用。
+由于外部 API 文件独立于主程序之外，可以直接将分发出去，他人设置好 config.yaml 中对应的属性，即可正常使用。
 
 当然，如果想要合并进 YUKI 以供更多人使用交流，欢迎提交 Pull Request :)
