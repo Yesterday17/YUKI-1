@@ -1,6 +1,6 @@
 <template>
-  <div class="titlebar" :style="{'-webkit-app-region': dragStyle}">
-    <p class="text-h3 title">YUKI GALGAME TRANSLATOR</p>
+  <div :class="shouldEnableDrag ? 'titlebar' : ''" :style="{'-webkit-app-region': dragStyle}">
+    <p v-if="shouldEnableDrag" class="text-h3 title">YUKI GALGAME TRANSLATOR</p>
     <v-btn
       v-if="pauseNewText"
       text

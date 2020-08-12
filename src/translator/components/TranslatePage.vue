@@ -1,7 +1,7 @@
 <template>
   <div class="three-columns">
-    <div v-if="isPreviousTextValid" class="navigation-button">
-      <v-btn text icon large dark @click="goToPreviousText">
+    <div class="navigation-button" v-if="isButtonsShown">
+      <v-btn text icon large dark :disabled="!isPreviousTextValid" @click="goToPreviousText">
         <v-icon dark>mdi-chevron-left</v-icon>
       </v-btn>
 
@@ -12,9 +12,18 @@
         <v-icon dark>mdi-format-font-size-decrease</v-icon>
       </v-btn>
     </div>
-    <div class="navigation-button" v-else></div>
+    <div v-else class="navigation-button"></div>
 
-    <v-container fluid style="flex: 1;">
+    <div class="navigation-button navigation-button-right" v-if="isButtonsShown">
+      <v-btn text icon large dark :disabled="!isNextTextValid" @click="goToNextText">
+        <v-icon dark>mdi-chevron-right</v-icon>
+      </v-btn>
+      <v-btn text icon large dark :disabled="!isNextTextValid" @click="goToLatestText">
+        <v-icon dark>mdi-chevron-triple-right</v-icon>
+      </v-btn>
+    </div>
+
+    <v-container fluid style="flex: 1; margin-right: 48px;">
       <div v-if="isMecabEnable" class="text-center">
         <yk-mecab-text :patterns="currentPatterns"></yk-mecab-text>
       </div>
@@ -30,16 +39,6 @@
         :translation="translation"
       ></yk-text-display>
     </v-container>
-
-    <div v-if="isNextTextValid" class="navigation-button">
-      <v-btn text icon large dark @click="goToNextText">
-        <v-icon dark>mdi-chevron-right</v-icon>
-      </v-btn>
-      <v-btn text icon large dark @click="goToLatestText">
-        <v-icon dark>mdi-chevron-triple-right</v-icon>
-      </v-btn>
-    </div>
-    <div class="navigation-button" v-else></div>
   </div>
 </template>
 
@@ -234,5 +233,10 @@ export default class TranslatePage extends Vue {
 
 .navigation-button {
   width: 48px;
+}
+
+.navigation-button-right {
+  position: absolute;
+  left: 48px;
 }
 </style>
