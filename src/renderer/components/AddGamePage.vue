@@ -87,7 +87,8 @@ export default class FavoritePage extends Vue {
     name: '',
     path: '',
     code: '',
-    localeChanger: ''
+    localeChanger: '',
+    textPreprocessor: ''
   }
 
   @namespace('Config').State('default')

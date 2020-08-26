@@ -34,7 +34,7 @@
     <!-- <v-btn rounded large color="warning" @click="resetSettings">{{$t('reset')}}</v-btn> -->
     <p class="text-h1">{{$t('appLibrariesSettings')}}</p>
     <p class="text-h2">Textractor</p>
-    <p class="text-h3">{{$t('providedByDefault')}}</p>
+    <p>{{$t('providedByDefault')}}</p>
 
     <p class="text-h2">MeCab</p>
     <v-row>
@@ -43,8 +43,6 @@
           :label="$t('path')"
           v-model="tempLibraries.mecab.path"
           readonly
-          outlined
-          rounded
           append-icon="mdi-dots-horizontal"
           @click:append="requestPath('mecab', 'libmecab.dll', '.')"
         />
@@ -67,8 +65,6 @@
           :label="$t('path')"
           v-model="tempLibraries.dictionaries.lingoes.path"
           readonly
-          outlined
-          rounded
           append-icon="mdi-dots-horizontal"
           @click:append="requestPath('lingoes', 'njcd.db', 'njcd.db')"
         />
@@ -91,16 +87,13 @@
         <v-text-field
           :label="$t('path')"
           v-model="tempLibraries.translators.jBeijing.dictPath"
-          outlined
-          rounded
         />
       </v-col>
-      <v-col cols="2" class="vertical-center">
+      <v-col cols="2">
         <v-btn
           color="primary"
           @click="startDownload('dict.jb')"
           :disabled="downloading.dictjb"
-          outlined
           rounded
         >
           {{$t('download')}}&nbsp;
