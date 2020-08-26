@@ -29,6 +29,7 @@ declare namespace yuki {
     path: string
     code: string
     localeChanger: string
+    textPreprocessor: string
   }
   export interface ConfigState {
     default: yuki.Config.Default

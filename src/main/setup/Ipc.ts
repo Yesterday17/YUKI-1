@@ -206,6 +206,12 @@ export default function (mainWindow: Electron.BrowserWindow) {
   ipcMain.on(
     IpcTypes.REQUEST_TRANSLATION,
     (event: Electron.Event, message: { id: number, text: string }) => {
+      if (translatorWindow?.getGameInfo().textPreprocessor) {
+        try {
+          const processor = new Function('text', translatorWindow?.getGameInfo().textPreprocessor)
+          message.text = processor(message.text)
+        } catch(e) {}
+      }
       TranslationManager.getInstance().translate(message.text, (translation) => {
         try {
           event.sender.send(IpcTypes.HAS_TRANSLATION, { id: message.id, translation })

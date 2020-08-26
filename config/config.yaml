@@ -24,7 +24,7 @@ onlineApis:
     external: true
     jsFile: config\tencentApi.js
     name: 腾讯云
-  - enable: true
+  - enable: false
     external: true
     jsFile: config\youdaoApi.js
     name: 有道
@@ -34,15 +34,10 @@ onlineApis:
     requestBodyFormat: 'X{"q": %TEXT%, "sl": "ja", "tl": "zh-CN"}'
     responseBodyPattern: 'Rclass="t0">([^<]*)<'
     url: 'https://translate.google.cn/m'
-  - enable: false
-    method: POST
+  - enable: true
+    external: true
+    jsFile: config\caiyunApi.js
     name: 彩云
-    requestBodyFormat: >-
-      J{"source": %TEXT%, "trans_type": "ja2zh", "request_id": "demo", "detect":
-      "true"}
-    requestHeaders: '{"X-Authorization": "token 3975l6lr5pcbvidl6jl2"}'
-    responseBodyPattern: J%RESPONSE%.target
-    url: 'https://api.interpreter.caiyunai.com/v1/translator'
   - enable: false
     external: true
     jsFile: config\azureApi.js
@@ -57,15 +52,15 @@ onlineApis:
     name: 百度开放平台
 translators:
   jBeijing:
-    dictPath: 'C:\YUKI\yuki\lib\dict\jb'
+    dictPath: 'D:\Code\YUKI-Translator\lib\dict\jb'
     enable: true
-    path: 'C:\JBeijing7'
+    path: 'D:\Game\Gal\Tools\JBeijing7'
 dictionaries:
   lingoes:
-    enable: true
+    enable: false
     path: 'C:\YUKI\libraries\dict\lingoes\njcd.db'
 mecab:
   enable: true
-  path: 'C:\YUKI\libraries\pos\mecab-ipadic'
+  path: 'D:\Game\Gal\Tools\mecab-ipadic'
 librariesRepoUrl: 'https://github.com/project-yuki/libraries/raw/master/_pack/'
 language: zh

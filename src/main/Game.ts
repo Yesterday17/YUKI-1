@@ -11,6 +11,7 @@ export default class Game extends BaseGame {
   private code: string
   private name: string
   private localeChanger: string
+  private textPreprocessor: string
   private exeName: string
 
   constructor (game: yuki.Game) {
@@ -21,6 +22,7 @@ export default class Game extends BaseGame {
     this.code = game.code
     this.name = game.name
     this.localeChanger = game.localeChanger
+    this.textPreprocessor = game.textPreprocessor
     this.exeName = ''
   }
 
@@ -34,7 +36,8 @@ export default class Game extends BaseGame {
       name: this.name,
       code: this.code,
       path: this.path,
-      localeChanger: this.localeChanger
+      localeChanger: this.localeChanger,
+      textPreprocessor: this.textPreprocessor
     }
   }
 

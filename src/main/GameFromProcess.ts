@@ -14,7 +14,8 @@ export default class GameFromProcess extends BaseGame {
       name: this.process.name.replace('.exe', ''),
       code: '',
       path: '',
-      localeChanger: ''
+      localeChanger: '',
+      textPreprocessor: ''
     }
   }
 
