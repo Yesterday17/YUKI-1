@@ -18,8 +18,14 @@ export default class TranslatorWindow {
   private isRealClose = false
   private config!: yuki.Config.Gui['translatorWindow']
 
+  private static instance: TranslatorWindow;
+  public static getInstance(): TranslatorWindow {
+    return this.instance;
+  }
+
   constructor () {
     this.create()
+    TranslatorWindow.instance = this;
   }
 
   public getWindow () {
