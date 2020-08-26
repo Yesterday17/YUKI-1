@@ -26,7 +26,8 @@ const configState: any = {
     background: '',
     autoHideTitlebar: false,
     mecab: {
-      showRomaji: false
+      showRomaji: false,
+      showAbbr: true
     }
   }
 }
@@ -107,6 +108,12 @@ const mutations = {
     payload: { value: boolean }
   ) {
     state.gui.mecab.showRomaji = payload.value
+  },
+  SET_MECAB_SHOW_ABBR (
+    state: yuki.TranslatorConfigState,
+    payload: { value: boolean }
+  ) {
+    state.gui.mecab.showAbbr = payload.value
   },
   SET_AUTO_HIDE_TITLEBAR (
     state: yuki.TranslatorConfigState,

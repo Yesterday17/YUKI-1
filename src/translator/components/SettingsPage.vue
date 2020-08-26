@@ -17,6 +17,7 @@
     "pauseNewText": "暂停新文本获取",
     "restoreNewText": "恢复新文本获取",
     "showRomaji": "显示罗马音",
+    "showAbbr": "显示词性",
     "autoHideTitlebar": "自动隐藏标题栏（开启后，将禁用翻译页面的标题栏拖拽操作）"
   },
   "en": {
@@ -35,6 +36,7 @@
     "pauseNewText": "Pause New Text Coming",
     "restoreNewText": "Restore New Text Coming",
     "showRomaji": "Show Romaji",
+    "showAbbr": "Show Abbr",
     "autoHideTitlebar": "Automatically Hide Titlebar (dragging titlebar will be disabled in tranlate page)"
   }
 }
@@ -104,6 +106,10 @@
       <v-col cols="4" style="display: flex">
         <v-switch v-model="showRomaji" style="margin-top: 0"></v-switch>
         <p style="color: white" class="text-center">{{$t('showRomaji')}}</p>
+      </v-col>
+      <v-col cols="4" style="display: flex">
+        <v-switch v-model="showAbbr" style="margin-top: 0"></v-switch>
+        <p style="color: white" class="text-center">{{$t('showAbbr')}}</p>
       </v-col>
     </v-row>
 
@@ -197,6 +203,15 @@ export default class HookSettings extends Vue {
   }
   set showRomaji (value: boolean) {
     this.$store.commit('Config/SET_MECAB_SHOW_ROMAJI', {
+      value
+    })
+    this.$store.commit('Config/SAVE_GUI_CONFIG')
+  }
+  get showAbbr () {
+    return this.getMecab().showAbbr
+  }
+  set showAbbr (value: boolean) {
+    this.$store.commit('Config/SET_MECAB_SHOW_ABBR', {
       value
     })
     this.$store.commit('Config/SAVE_GUI_CONFIG')

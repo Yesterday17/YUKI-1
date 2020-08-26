@@ -44,7 +44,8 @@ export default class GuiConfig extends Config {
         background: '#000000BD',
         renderMode: 'translucent',
         mecab: {
-          showRomaji: false
+          showRomaji: false,
+          showAbbr: true
         },
         autoHideTitlebar: false
       }

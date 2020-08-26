@@ -10,6 +10,7 @@
             :style="{color: abbrToColor(pattern.abbr), fontSize: `${originalTextSize}px`}"
           >{{pattern.word}}</div>
           <div
+            v-if="showAbbr"
             :style="{color: abbrToColor(pattern.abbr), fontSize: `${originalTextSize*0.6}px`}"
           >{{pattern.abbr !== "undefined" && pattern.abbr !== 'w' ? pattern.abbr : "&nbsp;"}}</div>
         </div>
@@ -87,6 +88,11 @@ export default class MecabText extends Vue {
     if (this.guiConfig.mecab) return this.guiConfig.mecab.showRomaji
     else return false
   }
+  get showAbbr () {
+    if (this.guiConfig.mecab) return this.guiConfig.mecab.showAbbr
+    else return false
+  }
+
   @Prop() public patterns!: yuki.MeCabPatterns
 
   @namespace('Config').State('gui')

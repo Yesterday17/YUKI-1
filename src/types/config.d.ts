@@ -87,6 +87,7 @@ declare namespace yuki {
         renderMode: 'transparent' | 'translucent';
         mecab: {
           showRomaji: boolean;
+          showAbbr: boolean;
         }
         autoHideTitlebar: boolean;
       }
