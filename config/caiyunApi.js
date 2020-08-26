@@ -70,7 +70,12 @@ function translate() {
     },
     json: true,
   }).then((json) => {
-    callback(decrypt(json.target));
+    if (json.target) {
+      callback(decrypt(json.target));
+    } else {
+      browserId = randomBrowserId();
+      jwt = undefined
+    }
   });
 }
 

@@ -16,7 +16,7 @@ localeChangers:
     exec: 'C:\ntleas046_x64\x86\ntleas.exe %GAME_PATH%'
     name: Ntleas
 onlineApis:
-  - enable: true
+  - enable: false
     external: true
     jsFile: config\qqApi.js
     name: 腾讯
@@ -42,7 +42,7 @@ onlineApis:
     external: true
     jsFile: config\azureApi.js
     name: Azure
-  - enable: false
+  - enable: true
     external: true
     jsFile: config\baiduApi.js
     name: 百度

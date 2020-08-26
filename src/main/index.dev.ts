@@ -6,7 +6,7 @@
  */
 
 // Install `electron-debug` with `devtron`
-require('electron-debug')({ showDevTools: true, devToolsMode: 'undocked' })
+require('electron-debug')({ showDevTools: false, devToolsMode: 'undocked' })
 
 // Install `vue-devtools`
 require('electron').app.on('ready', () => {
