@@ -25,7 +25,7 @@ export default class ExternalApi implements yuki.Translator {
     this.registerWatchCallback()
   }
 
-  public translate (text: string, callback: (translation: string) => void) {
+  private translateApi (text: string, callback: (translation: string) => void) {
     this.responseVmContext.text = text
     this.responseVmContext.callback = callback
     try {
@@ -35,6 +35,12 @@ export default class ExternalApi implements yuki.Translator {
     } catch (e) {
       debug('[%s] runtime error !> %s', this.config.name, e.stack)
     }
+  }
+
+  public translate (text: string): Promise<string> {
+    return new Promise(resolve => {
+      this.translateApi(text, tr => resolve(tr));
+    })
   }
 
   public isEnable () {

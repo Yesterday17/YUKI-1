@@ -36,11 +36,17 @@ export default class Api implements yuki.Translator {
     }
   }
 
-  public translate (text: string, callback: (translation: string) => void) {
+  private translateApi (text: string, callback: (translation: string) => void) {
     this.generateRequestBody(text)
     this.getResponseBody((body) => {
       const result = this.parseResponse(body)
       callback(result)
+    })
+  }
+
+  public translate (text: string): Promise<string> {
+    return new Promise(resolve => {
+      this.translateApi(text, tr => resolve(tr));
     })
   }
 

@@ -12,12 +12,12 @@ export default class TranslationManager {
   }
   private static instance: TranslationManager | undefined
 
-  private apis: yuki.Translator[] = []
+  private apis: {[name: string]: yuki.Translator} = {}
 
   public initializeApis (
     apis: yuki.Config.Default['onlineApis']
   ): TranslationManager {
-    this.apis = []
+    this.apis = {}
     for (const api of apis) {
       try {
         if (api.external && api.jsFile) {
@@ -45,44 +45,21 @@ export default class TranslationManager {
     text: string,
     callback: (translation: yuki.Translations['translations']) => void
   ) {
-    let toTranslateCount = 0
-    for (const key in this.apis) {
+    let hasTranslation = false
+    Object.keys(this.apis).forEach(key => {
       if (this.apis[key].isEnable()) {
-        toTranslateCount++
-        this.apis[key].translate(text, (translation) => {
+        hasTranslation = true
+        this.apis[key].translate(text).then(translation => {
           debug('[%s] -> %s', this.apis[key].getName(), translation)
           callback({
             [this.apis[key].getName()]: translation
           })
         })
       }
-    }
-    if (toTranslateCount === 0) {
-      callback({})
-    }
-  }
+    })
 
-  public translateAll (
-    text: string,
-    callback: (translations: yuki.Translations) => void
-  ) {
-    let toTranslateCount = 0
-    let finishedCount = 0
-    const result: yuki.Translations = { original: text, translations: {} }
-    for (const key in this.apis) {
-      if (this.apis[key].isEnable()) {
-        toTranslateCount++
-        this.apis[key].translate(text, (translation) => {
-          result.translations[key] = translation
-          finishedCount++
-          if (finishedCount === toTranslateCount) {
-            callback(result)
-          }
-        })
-      }
-    }
-    if (toTranslateCount === 0) {
-      callback(result)
+    if (!hasTranslation) {
+      callback({})
     }
   }
 }
