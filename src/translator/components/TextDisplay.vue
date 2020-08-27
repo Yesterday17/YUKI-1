@@ -59,4 +59,8 @@ export default class TextDisplay extends Vue {
 .textBoder {
   text-shadow: 0 0 0.2em rgb(0, 46, 251);
 }
+
+.textBoder:hover {
+  -webkit-text-stroke: 0.2px black;
+}
 </style>
