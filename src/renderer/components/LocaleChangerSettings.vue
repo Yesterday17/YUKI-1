@@ -56,11 +56,11 @@
         </v-toolbar>
       </template>
 
-      <template v-slot:item.enable="{ item }">
+      <template v-slot:[`item.enable`]="{ item }">
         <v-switch v-model="item.enable" @click.stop="setDefault(item.id)" inset></v-switch>
       </template>
 
-      <template v-slot:item.actions="{ item }">
+      <template v-slot:[`item.actions`]="{ item }">
         <v-icon class="mr-2" @click="editLocaleChanger(item.id)">mdi-pencil</v-icon>
         <v-icon @click="deleteLocaleChanger(item.id)">mdi-delete</v-icon>
       </template>

@@ -24,14 +24,16 @@
     </div>
 
     <v-container fluid style="flex: 1; margin-right: 48px;">
-      <div v-if="isMecabEnable" class="text-center">
-        <yk-mecab-text :patterns="currentPatterns"></yk-mecab-text>
+      <div @dblclick="copy">
+        <div v-if="isMecabEnable" class="text-center">
+          <yk-mecab-text :patterns="currentPatterns"></yk-mecab-text>
+        </div>
+        <div
+          v-else
+          class="text-center"
+          :style="{color: originalTextColor, fontSize: `${originalTextSize}px`}"
+        >{{currentOriginText}}</div>
       </div>
-      <div
-        v-else
-        class="text-center"
-        :style="{color: originalTextColor, fontSize: `${originalTextSize}px`}"
-      >{{currentOriginText}}</div>
       <yk-text-display
         v-for="(translation, key) in currentTranslations"
         :key="key"
@@ -43,7 +45,7 @@
 </template>
 
 <script lang="ts">
-import { remote } from 'electron'
+import { clipboard, remote } from 'electron'
 import * as _ from 'lodash'
 import Vue from 'vue'
 import Component from 'vue-class-component'
@@ -194,6 +196,10 @@ export default class TranslatePage extends Vue {
     if (this.translationTextSize > 1) {
       this.translationTextSize = this.translationTextSize - 1
     }
+  }
+
+  public copy() {
+    clipboard.writeText(this.currentOriginText)
   }
 
   public beforeRouteEnter (to: Route, from: Route, next: () => void) {

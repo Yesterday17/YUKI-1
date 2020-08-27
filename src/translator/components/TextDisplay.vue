@@ -17,6 +17,7 @@
             marginLeft: '100px',
             textAlign: 'center'
           }"
+        @dblclick="copy"
       >{{translation}}</div>
     </div>
   </div>
@@ -26,6 +27,7 @@
 import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
+import { clipboard } from 'electron'
 
 @Component
 export default class TextDisplay extends Vue {
@@ -37,6 +39,10 @@ export default class TextDisplay extends Vue {
 
   get translationTextStyle () {
     return this.guiConfig.translationText
+  }
+
+  public copy() {
+    clipboard.writeText(this.translation)
   }
 }
 </script>
