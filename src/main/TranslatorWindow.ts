@@ -60,7 +60,8 @@ export default class TranslatorWindow {
       show: false,
       alwaysOnTop: this.config.alwaysOnTop,
       transparent: true,
-      frame: false
+      frame: false,
+      skipTaskbar: true
     })
 
     debug(
