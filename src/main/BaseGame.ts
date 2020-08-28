@@ -1,7 +1,7 @@
 const debug = require('debug')('yuki:game')
 import { EventEmitter } from 'events'
 import Hooker from './Hooker'
-import { registerProcessExitCallback } from './Win32'
+import { registerProcessExitCallback, registerWindowMinimizeStartCallback, registerWindowMinimizeEndCallback } from './Win32'
 
 export default abstract class BaseGame extends EventEmitter {
   protected pids: number[]
@@ -22,6 +22,7 @@ export default abstract class BaseGame extends EventEmitter {
   protected afterGetPids () {
     this.injectProcessByPid()
     this.registerProcessExitCallback()
+    this.registerGameWindowStatusCallback()
     this.emit('started', this)
   }
 
@@ -32,6 +33,15 @@ export default abstract class BaseGame extends EventEmitter {
   private registerProcessExitCallback () {
     registerProcessExitCallback(this.pids, () => {
       this.emit('exited', this)
+    })
+  }
+
+  private registerGameWindowStatusCallback() {
+    registerWindowMinimizeStartCallback(this.pids[0], ()=>{
+      this.emit('minimize-start', this)
+    })
+    registerWindowMinimizeEndCallback(this.pids[0], ()=>{
+      this.emit('minimize-end', this)
     })
   }
 }
