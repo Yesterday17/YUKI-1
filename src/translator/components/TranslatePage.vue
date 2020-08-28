@@ -203,27 +203,18 @@ export default class TranslatePage extends Vue {
   }
 
   public beforeRouteEnter (to: Route, from: Route, next: () => void) {
-    updateWindowHeight(this, true, 24)
+    //updateWindowHeight(this, true, 24)
     next()
-  }
-
-  @Watch('isButtonShown')
-  public onButtonShownChanged () {
-    if (this.isButtonsShown) {
-      updateWindowHeight(this, true, 24)
-    } else {
-      updateWindowHeight(this, true, 0)
-    }
   }
 
   public updated () {
     if (this.isButtonsShown) {
       this.$nextTick(() => {
-        updateWindowHeight(this, true, 24)
+        updateWindowHeight(this, true, 24, false)
       })
     } else {
       this.$nextTick(() => {
-        updateWindowHeight(this, true, 0)
+        updateWindowHeight(this, true, 0, false)
       })
     }
   }

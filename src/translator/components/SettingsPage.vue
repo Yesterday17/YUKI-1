@@ -288,7 +288,8 @@ export default class HookSettings extends Vue {
     updateWindowHeight(
       this,
       false,
-      Math.trunc(remote.screen.getPrimaryDisplay().size.height * 0.6)
+      Math.trunc(remote.screen.getPrimaryDisplay().size.height * 0.6),
+      false
     )
     next()
   }

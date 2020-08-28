@@ -147,11 +147,11 @@ export default class App extends Vue {
     if (this.$route.path === '/translate' && !this.isGetDictResult) {
       if (this.isButtonsShown && !this.isWindowTooHigh) {
         this.$nextTick(() => {
-          updateWindowHeight(this, true, 24)
+          //updateWindowHeight(this, true, 24)
         })
       } else {
         this.$nextTick(() => {
-          updateWindowHeight(this, true, 0)
+          //updateWindowHeight(this, true, 0)
         })
       }
     }
