@@ -67,7 +67,7 @@ export default class MecabMiddleware
 
   public async process(context: yuki.TextOutputObject): Promise<yuki.TextOutputObject> {
     if (this.enabled) {
-      context.text = await YukiNativeBridge.getInstance().FetchMecab(context.text)
+      context.text = '$' + await YukiNativeBridge.getInstance().fetchMecab(context.text)
     }
 
     return context

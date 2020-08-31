@@ -13,6 +13,7 @@ import Processes from '../Processes'
 import DictManager from '../translate/DictManager'
 import TranslationManager from '../translate/TranslationManager'
 import TranslatorWindow from '../TranslatorWindow'
+import YukiNativeBridge from './YukiNativeBridge'
 
 let runningGame: BaseGame
 let translatorWindow: TranslatorWindow | null
@@ -35,6 +36,9 @@ export default function (mainWindow: Electron.BrowserWindow) {
     TranslationManager.getInstance().initializeTranslators(
       ConfigManager.getInstance().get<yuki.Config.Default>('default')
         .translators
+    )
+    YukiNativeBridge.getInstance().initializeYukiNative(
+      ConfigManager.getInstance().get<yuki.Config.Default>('default').native
     )
     debug('apis started')
   })
@@ -114,7 +118,7 @@ export default function (mainWindow: Electron.BrowserWindow) {
     }
   })
 
-  function requestGame (event: Electron.Event) {
+  function requestGame(event: Electron.Event) {
     if (translatorWindow) {
       debug('request config %o', translatorWindow.getGameInfo())
       sendGameInfo(event)
@@ -264,7 +268,7 @@ export default function (mainWindow: Electron.BrowserWindow) {
   )
 }
 
-function sendConfig (configName: string, event: Electron.Event) {
+function sendConfig(configName: string, event: Electron.Event) {
   event.sender.send(
     IpcTypes.HAS_CONFIG,
     configName,
@@ -272,7 +276,7 @@ function sendConfig (configName: string, event: Electron.Event) {
   )
 }
 
-function sendGameInfo (event: Electron.Event) {
+function sendGameInfo(event: Electron.Event) {
   event.sender.send(
     IpcTypes.HAS_CONFIG,
     'game',
@@ -280,7 +284,7 @@ function sendGameInfo (event: Electron.Event) {
   )
 }
 
-function sendLibrariesBaseStorePath (event: Electron.Event) {
+function sendLibrariesBaseStorePath(event: Electron.Event) {
   event.sender.send(
     IpcTypes.HAS_CONFIG,
     'librariesBaseStorePath',

@@ -100,7 +100,7 @@ export default class Hooker {
     )
     applicationBuilder.use(
       new MecabMiddleware(
-        ConfigManager.getInstance().get<yuki.Config.Default>('default').mecab
+        ConfigManager.getInstance().get<yuki.Config.Default>('default').native
       )
     )
     applicationBuilder.use(new FilterMiddleware())

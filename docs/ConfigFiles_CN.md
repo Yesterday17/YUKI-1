@@ -187,15 +187,11 @@ J 北京自定义词典所在的目录。
 
 [MeCab](https://taku910.github.io/mecab/) 是一个日语分词器，用于将日语文本进行分词并标注词性。经过分词的文本会更加清晰并易于与翻译结果进行对照。
 
-由于实现问题，YUKI 依赖对 MeCab 直接的 DLL 调用，因此请下载[经过测试的 MeCab 版本](https://github.com/project-yuki/libraries/raw/master/_pack/pos.mecab-ipadic.zip)。
+YUKI 通过 YukiNative 实现分词。
 
 #### enable
 
 是否启用 MeCab。
-
-#### path
-
-MeCab 所在的目录。注意，该目录下应包含 libmecab.dll。
 
 ### .librariesRepoUrl
 
