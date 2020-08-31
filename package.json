@@ -65,7 +65,6 @@
     "request-promise-native": "^1.0.5",
     "sqlite3": "^4.1.0",
     "tasklist": "^3.1.1",
-    "textractor-wrapper": "^2.0.1",
     "vue": "^2.6.10",
     "vue-color": "^2.7.0",
     "vue-electron": "^1.0.6",
@@ -75,6 +74,7 @@
     "vuetify-dialog": "^1.0.0-alpha.5",
     "vuex": "^3.0.1",
     "wanakana": "^4.0.2",
+    "websocket": "^1.0.32",
     "xml2js": "^0.4.22",
     "xterm": "^4.2.0-vscode1",
     "xterm-addon-fit": "^0.3.0"
@@ -91,6 +91,7 @@
     "@types/request-promise-native": "^1.0.15",
     "@types/sqlite3": "^3.1.5",
     "@types/vue-color": "^2.4.1",
+    "@types/websocket": "^1.0.1",
     "@types/xml2js": "^0.4.5",
     "ajv": "^6.5.0",
     "babel-core": "^6.26.3",

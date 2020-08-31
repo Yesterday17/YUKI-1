@@ -59,7 +59,7 @@ export default class MecabMiddleware
 
   constructor(config: yuki.Config.YukiNative) {
     this.enabled = config.mecab
-    if (this.enabled) {
+    if (!this.enabled) {
       debug('disabled')
       return
     }

@@ -1,7 +1,6 @@
 import IpcTypes from '../common/IpcTypes'
 const debug = require('debug')('yuki:hooker')
 import * as path from 'path'
-import { Textractor } from 'textractor-wrapper'
 import ApplicationBuilder from '../common/ApplicationBuilder'
 import ConfigManager from './config/ConfigManager'
 import FilterMiddleware from './middlewares/FilterMiddleware'
@@ -11,6 +10,7 @@ import TextInterceptorMiddleware from './middlewares/TextInterceptorMiddleware'
 import TextMergerMiddleware from './middlewares/TextMergerMiddleware'
 import TextModifierMiddleware from './middlewares/TextModifierMiddleware'
 import TextPreprocessorMiddleware from './middlewares/TextPreprocessorMiddleware'
+import YukiNativeBridge from './setup/YukiNativeBridge'
 
 let applicationBuilder: ApplicationBuilder<yuki.TextOutputObject>
 
@@ -27,22 +27,13 @@ export default class Hooker {
   }
   private static instance: Hooker | undefined
 
-  private hooker: Textractor
-
   private publisherMap: IPublisherMap = {
     'thread-output': new PublishMiddleware(IpcTypes.HAS_HOOK_TEXT)
   }
 
   private constructor() {
-    const absolutePath = path.join(
-      global.__baseDir,
-      'lib/textractor/TextractorCLI.exe'
-    )
-    debug('trying to access CLI exe at %s', absolutePath)
-    this.hooker = new Textractor(absolutePath)
     this.buildApplication()
     this.initHookerCallbacks()
-    this.hooker.start()
   }
 
   public rebuild() {
@@ -67,19 +58,16 @@ export default class Hooker {
 
   public injectProcess(pid: number) {
     debug('injecting process %d...', pid)
-    this.hooker.attach(pid)
-    debug('process %d injected', pid)
+    YukiNativeBridge.getInstance().fetchTextractor(pid, '', () => debug('process %d injected', pid))
   }
 
   public insertHook(pid: number, code: string) {
     debug('inserting hook %s to process %d...', code, pid)
-    this.hooker.hook(pid, code)
-    debug(`hook %s inserted into process %d`, code, pid)
+    YukiNativeBridge.getInstance().fetchTextractor(pid, code, () => debug(`hook %s inserted into process %d`, code, pid))
   }
 
   private buildApplication() {
     applicationBuilder = new ApplicationBuilder<yuki.TextOutputObject>()
-    // applicationBuilder.use(new TextMergerMiddleware())
     applicationBuilder.use(
       new TextMergerMiddleware(
         ConfigManager.getInstance().get<yuki.Config.Texts>('texts').merger
@@ -110,7 +98,7 @@ export default class Hooker {
   }
 
   private initHookerCallbacks() {
-    this.hooker.on('output', (output) => {
+    YukiNativeBridge.getInstance().registerListener<yuki.TextOutputObject>('textractor-output', (output) => {
       applicationBuilder.run(output)
     })
   }

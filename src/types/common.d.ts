@@ -1,4 +1,11 @@
 declare namespace yuki {
+  export interface TextractorPushMessage {
+    type: 'textractor';
+    message: TextOutputObject
+  }
+
+  export type WebSocketPushMessage = TextractorPushMessage
+
   export interface Middleware<T> {
     process: (context: T) => Promise<T>
   }
