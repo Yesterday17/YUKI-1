@@ -11,7 +11,7 @@ export default class ExternalApi implements yuki.Translator {
   private scriptString: string = ''
   private absolutePath: string = ''
 
-  constructor (config: yuki.Config.OnlineApiItem) {
+  constructor(config: yuki.Config.OnlineApiItem) {
     this.config = config
     if (!this.config.jsFile) {
       debug(
@@ -25,7 +25,7 @@ export default class ExternalApi implements yuki.Translator {
     this.registerWatchCallback()
   }
 
-  private translateApi (text: string, callback: (translation: string) => void) {
+  private translateApi(text: string, callback: (translation: string) => void) {
     this.responseVmContext.text = text
     this.responseVmContext.callback = callback
     try {
@@ -37,25 +37,25 @@ export default class ExternalApi implements yuki.Translator {
     }
   }
 
-  public translate (text: string): Promise<string> {
+  public translate(text: string): Promise<string> {
     return new Promise(resolve => {
       this.translateApi(text, tr => resolve(tr));
     })
   }
 
-  public isEnable () {
+  public isEnable() {
     return this.config.enable
   }
 
-  public setEnable (isEnable: boolean) {
+  public setEnable(isEnable: boolean) {
     this.config.enable = isEnable
   }
 
-  public getName () {
+  public getName() {
     return this.config.name
   }
 
-  private loadExternalJsFile () {
+  private loadExternalJsFile() {
     if (!this.config.jsFile) return
 
     this.absolutePath = path.join(global.__baseDir, this.config.jsFile)
@@ -67,7 +67,7 @@ export default class ExternalApi implements yuki.Translator {
     }
   }
 
-  private createVmContext () {
+  private createVmContext() {
     this.responseVmContext = vm.createContext({
       Buffer,
       Request: request,
@@ -84,7 +84,7 @@ export default class ExternalApi implements yuki.Translator {
     })
   }
 
-  private registerWatchCallback () {
+  private registerWatchCallback() {
     fs.watch(this.absolutePath, {}, () => {
       debug('[%s] script file changed. reloading...', this.config.name)
       this.loadExternalJsFile()

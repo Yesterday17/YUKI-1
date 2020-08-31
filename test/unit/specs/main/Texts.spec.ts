@@ -12,15 +12,14 @@ describe('Texts', () => {
 
     textModifierMiddleware.process(
       { text: 'ボクにaa選択のbb余地はcc無かった。' },
-      (newContext) => {
-        try {
-          expect(newContext.text).to.deep.equal('ボクに選択の余地は無かった。')
-        } catch (e) {
-          return done(e)
-        }
-        done()
+    ).then((newContext) => {
+      try {
+        expect(newContext.text).to.deep.equal('ボクに選択の余地は無かった。')
+      } catch (e) {
+        return e
       }
-    )
+      return
+    })
   })
 
   it('removes duplicate characters when .deduplicate = true', (done) => {
@@ -30,14 +29,13 @@ describe('Texts', () => {
 
     textModifierMiddleware.process(
       { text: 'ボクに選択選択の余地はは無かった無かった。' },
-      (newContext) => {
-        try {
-          expect(newContext.text).to.deep.equal('ボクに選択の余地は無かった。')
-        } catch (e) {
-          return done(e)
-        }
-        done()
+    ).then((newContext) => {
+      try {
+        expect(newContext.text).to.deep.equal('ボクに選択の余地は無かった。')
+      } catch (e) {
+        return e
       }
-    )
+      return
+    })
   })
 })

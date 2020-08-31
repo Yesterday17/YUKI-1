@@ -4,8 +4,22 @@
 import { expect } from 'chai'
 import * as path from 'path'
 import MecabMiddleware from '../../../../src/main/middlewares/MeCabMiddleware'
+import YukiNativeBridge from '../../../../src/main/setup/YukiNativeBridge'
 
 describe('MeCab', () => {
+  before(() => {
+    YukiNativeBridge.getInstance().initializeYukiNative({
+      path: `D:\\Code\\YukiNative\\YukiNative\\bin\\Debug\\net472\\YukiNative.exe`,
+      listen: 'localhost:8080',
+      mecab: true,
+      translators: {
+        jBeijing: {
+          enable: false
+        }
+      }
+    })
+  })
+
   it('returns correct patterns', (done) => {
     const mecabMiddleware = new MecabMiddleware({
       enable: true,
@@ -14,17 +28,16 @@ describe('MeCab', () => {
 
     mecabMiddleware.process(
       { text: 'ボクに選択の余地は無かった。' },
-      (newContext) => {
-        try {
-          expect(newContext.text).to.deep.equal(
-            '$ボク,n,ぼく|に,p,|選択,n,せんたく|の,p,|余地,n,よち|は,p,|無かっ,adj,なかっ|た,aux,|。,w,'
-          )
-        } catch (e) {
-          return done(e)
-        }
-        done()
+    ).then((newContext) => {
+      try {
+        expect(newContext.text).to.deep.equal(
+          '$ボク,n,ぼく|に,p,|選択,n,せんたく|の,p,|余地,n,よち|は,p,|無かっ,adj,なかっ|た,aux,|。,w,'
+        )
+      } catch (e) {
+        return e
       }
-    )
+      return
+    })
   })
 
   it('converts mecab string to object', () => {
@@ -57,16 +70,15 @@ describe('MeCab', () => {
 
     mecabMiddleware.process(
       { text: 'ボクに選択の余地、無かった。。。！' },
-      (newContext) => {
-        try {
-          expect(newContext.text).to.deep.equal(
-            '$ボク,n,ぼく|に,p,|選択,n,せんたく|の,p,|余地,n,よち|、,w,|無かっ,adj,なかっ|た,aux,|。。。！,w,'
-          )
-        } catch (e) {
-          return done(e)
-        }
-        done()
+    ).then((newContext) => {
+      try {
+        expect(newContext.text).to.deep.equal(
+          '$ボク,n,ぼく|に,p,|選択,n,せんたく|の,p,|余地,n,よち|、,w,|無かっ,adj,なかっ|た,aux,|。。。！,w,'
+        )
+      } catch (e) {
+        return e
       }
-    )
+      return
+    })
   })
 })

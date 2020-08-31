@@ -17,7 +17,7 @@ abstract class Config {
   protected filePathOld!: string
   protected isSaving: boolean = false
 
-  public init () {
+  public init() {
     this.filePath = path.resolve(global.__baseDir, `config/${this.getFilename()}.yaml`)
     this.filePathOld = path.resolve(global.__baseDir, `config/${this.getFilename()}.json`)
     this.load()
@@ -27,7 +27,7 @@ abstract class Config {
     return this
   }
 
-  public load () {
+  public load() {
     let fileContent
     try {
       let filePath = this.filePath
@@ -47,11 +47,11 @@ abstract class Config {
     }
   }
 
-  public save () {
+  public save() {
     try {
       Config.FILE_OPTIONS;
       fs.writeFileSync(
-        this.filePath, 
+        this.filePath,
         safeDump(
           this.config,
           { indent: Config.FILE_OPTIONS.spaces }
@@ -73,20 +73,20 @@ abstract class Config {
     }
   }
 
-  public get () {
+  public get() {
     return this.config
   }
 
-  public set (cfg: any) {
+  public set(cfg: any) {
     this.config = cfg
     this.save()
   }
 
-  public abstract getFilename (): string
+  public abstract getFilename(): string
 
-  protected abstract getDefaultObject (): object
+  protected abstract getDefaultObject(): object
 
-  private registerWatchCallback () {
+  private registerWatchCallback() {
     fs.watch(this.filePath, {}, () => {
       if (this.isSaving) return
       try {
