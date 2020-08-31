@@ -1,7 +1,7 @@
 import TranslatorWindow from "../TranslatorWindow";
 
 export default class TextPreprocessorMiddleware implements yuki.Middleware<yuki.TextOutputObject> {
-  process(context: yuki.TextOutputObject, next: (newContext: yuki.TextOutputObject) => void) {
+  async process(context: yuki.TextOutputObject): Promise<yuki.TextOutputObject> {
     let window = TranslatorWindow.getInstance()
 
     if (window?.getGameInfo().textPreprocessor) {
@@ -11,6 +11,6 @@ export default class TextPreprocessorMiddleware implements yuki.Middleware<yuki.
       } catch (e) { }
     }
 
-    next(context)
+    return context
   }
 }

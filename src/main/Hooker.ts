@@ -19,7 +19,7 @@ interface IPublisherMap {
 }
 
 export default class Hooker {
-  public static getInstance () {
+  public static getInstance() {
     if (!this.instance) {
       this.instance = new Hooker()
     }
@@ -33,7 +33,7 @@ export default class Hooker {
     'thread-output': new PublishMiddleware(IpcTypes.HAS_HOOK_TEXT)
   }
 
-  private constructor () {
+  private constructor() {
     const absolutePath = path.join(
       global.__baseDir,
       'lib/textractor/TextractorCLI.exe'
@@ -45,12 +45,11 @@ export default class Hooker {
     this.hooker.start()
   }
 
-  public rebuild () {
-    delete require.cache[require.resolve('mecab-ffi')]
+  public rebuild() {
     this.buildApplication()
   }
 
-  public subscribe (on: keyof IPublisherMap, webContents: Electron.WebContents) {
+  public subscribe(on: keyof IPublisherMap, webContents: Electron.WebContents) {
     if (!this.publisherMap[on]) {
       debug('trying to register unknown event %s', on)
     } else {
@@ -58,7 +57,7 @@ export default class Hooker {
     }
   }
 
-  public unsubscribe (on: string, webContents: Electron.WebContents) {
+  public unsubscribe(on: string, webContents: Electron.WebContents) {
     if (!this.publisherMap[on]) {
       debug('trying to unregister unknown event %s', on)
     } else {
@@ -66,19 +65,19 @@ export default class Hooker {
     }
   }
 
-  public injectProcess (pid: number) {
+  public injectProcess(pid: number) {
     debug('injecting process %d...', pid)
     this.hooker.attach(pid)
     debug('process %d injected', pid)
   }
 
-  public insertHook (pid: number, code: string) {
+  public insertHook(pid: number, code: string) {
     debug('inserting hook %s to process %d...', code, pid)
     this.hooker.hook(pid, code)
     debug(`hook %s inserted into process %d`, code, pid)
   }
 
-  private buildApplication () {
+  private buildApplication() {
     applicationBuilder = new ApplicationBuilder<yuki.TextOutputObject>()
     // applicationBuilder.use(new TextMergerMiddleware())
     applicationBuilder.use(
@@ -110,7 +109,7 @@ export default class Hooker {
     debug('application builded')
   }
 
-  private initHookerCallbacks () {
+  private initHookerCallbacks() {
     this.hooker.on('output', (output) => {
       applicationBuilder.run(output)
     })

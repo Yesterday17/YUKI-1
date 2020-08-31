@@ -6,7 +6,7 @@ export default class TextInterceptorMiddleware
   private deduplicateRegex: RegExp | undefined
   private delineBreak: boolean
 
-  constructor (config: yuki.Config.Texts['modifier']) {
+  constructor(config: yuki.Config.Texts['modifier']) {
     this.removeAscii = config.removeAscii
     this.delineBreak = config.delineBreak
 
@@ -18,29 +18,26 @@ export default class TextInterceptorMiddleware
     debug('initialized')
   }
 
-  public process (
-    context: yuki.TextOutputObject,
-    next: (newContext: yuki.TextOutputObject) => void
-  ) {
+  public async process(context: yuki.TextOutputObject): Promise<yuki.TextOutputObject> {
     context.text = context.text.replace(/[\x00-\x20]/g, '')
     context.text = context.text.replace(/_t.*?\//g, '')
 
     if (this.removeAscii) {
       context.text = context.text.replace(/[\x00-\xFF]+/g, '')
-      if (context.text === '') return
+      if (context.text === '') throw "empty"
     }
     if (this.deduplicateRegex) {
       context.text = context.text.replace(this.deduplicateRegex, '$1')
-      if (context.text === '') return
+      if (context.text === '') throw "empty"
     }
     if (this.delineBreak) {
       context.text = context.text.replace(/_r/g, '')
       context.text = context.text.replace(/<br>/g, '')
       context.text = context.text.replace(/#n/g, '')
       context.text = context.text.replace(/\s+/g, '')
-      if (context.text === '') return
+      if (context.text === '') throw "empty"
     }
 
-    next(context)
+    return context
   }
 }

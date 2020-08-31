@@ -1,41 +1,10 @@
-import * as fs from 'fs'
-import * as path from 'path'
-const debug = require('debug')('yuki:mecab')
-const toHiragana = require('wanakana').toHiragana
-const toRomaji = require('wanakana').toRomaji
+import YukiNativeBridge from "../setup/YukiNativeBridge"
 
-interface IMeCab {
-  parseSync: (text: string) => string[][]
-}
+const debug = require('debug')('yuki:mecab')
+const toRomaji = require('wanakana').toRomaji
 
 export default class MecabMiddleware
   implements yuki.Middleware<yuki.TextOutputObject> {
-  /**
-   * Role type
-   * See: https://answers.yahoo.com/question/index?qid=20110805070212AAdpWZf
-   * See: https://gist.github.com/neubig/2555399
-   */
-  public static readonly KANJI_TO_ABBR_MAP = {
-    人名: 'm', // name
-    地名: 'mp', // place
-    名詞: 'n', // noun
-    数詞: 'num', // number
-    代名詞: 'pn', // pronoun
-    動詞: 'v', // verb
-    形状詞: 'a', // http://d.hatena.ne.jp/taos/20090701/p1
-    連体詞: 'adn', // adnominal, http://en.wiktionary.org/wiki/連体詞
-    形容詞: 'adj', // adjective
-    副詞: 'adv', // adverb
-    助詞: 'p', // 動詞 = particle
-    助動詞: 'aux', // 助動詞 = auxiliary verb
-    接尾辞: 'suf', // suffix
-    接頭辞: 'pref', // prefix
-    感動詞: 'int', // interjection
-    接続詞: 'conj', // conjunction
-    補助記号: 'punct', // punctuation
-    記号: 'w' // letters
-    // ROLE_PHRASE: 'x'
-  }
 
   public static readonly ABBR_TO_COLOR_MAP = {
     m: '#a7ffeb',
@@ -58,11 +27,11 @@ export default class MecabMiddleware
     w: '#bcaaa4'
   }
 
-  public static isMeCabString (mstring: string): boolean {
+  public static isMeCabString(mstring: string): boolean {
     return mstring.startsWith('$')
   }
 
-  public static stringToObject (mstring: string): yuki.MeCabPatterns {
+  public static stringToObject(mstring: string): yuki.MeCabPatterns {
     if (!this.isMeCabString(mstring)) return []
 
     const validString = mstring.substring(1)
@@ -74,7 +43,7 @@ export default class MecabMiddleware
     return result
   }
 
-  public static objectToOriginalText (patterns: yuki.MeCabPatterns): string {
+  public static objectToOriginalText(patterns: yuki.MeCabPatterns): string {
     let result = ''
     for (const pattern of patterns) {
       result += pattern.word
@@ -82,71 +51,25 @@ export default class MecabMiddleware
     return result
   }
 
-  public static kanaToRomaji (kana: string): string {
+  public static kanaToRomaji(kana: string): string {
     return toRomaji(kana)
   }
 
-  private mecab: IMeCab | undefined
+  private enabled: boolean
 
-  constructor (config: yuki.Config.Libraries['mecab']) {
-    if (
-      !config.enable ||
-      !fs.existsSync(path.join(config.path, 'libmecab.dll'))
-    ) {
+  constructor(config: yuki.Config.YukiNative) {
+    this.enabled = config.mecab
+    if (this.enabled) {
       debug('disabled')
       return
     }
-
-    process.env.PATH += `;${config.path}`
-    try {
-      this.mecab = require('mecab-ffi')
-      debug('enabled')
-    } catch (e) {
-      debug('enable failed !> %s', e)
-    }
   }
 
-  public process (
-    context: yuki.TextOutputObject,
-    next: (newContext: yuki.TextOutputObject) => void
-  ) {
-    if (!this.mecab) {
-      next(context)
-      return
+  public async process(context: yuki.TextOutputObject): Promise<yuki.TextOutputObject> {
+    if (this.enabled) {
+      context.text = await YukiNativeBridge.getInstance().FetchMecab(context.text)
     }
 
-    const results = this.mecab.parseSync(context.text)
-    const usefulResult = []
-    let toMergeLetters = ''
-    for (const result of results) {
-      const abbr = MecabMiddleware.KANJI_TO_ABBR_MAP[result[1]]
-
-      if (abbr === 'w') {
-        toMergeLetters += result[0]
-        continue
-      }
-
-      if (abbr !== 'w' && toMergeLetters !== '') {
-        usefulResult.push(
-          `${toMergeLetters},w,`
-        )
-        toMergeLetters = ''
-      }
-
-      let kana = toHiragana(result[8])
-      if (kana === result[0]) kana = ''
-      usefulResult.push(
-        `${result[0]},${abbr},${kana}`
-      )
-    }
-
-    if (toMergeLetters !== '') {
-      usefulResult.push(
-        `${toMergeLetters},w,`
-      )
-    }
-
-    context.text = `$${usefulResult.join('|')}`
-    next(context)
+    return context
   }
 }

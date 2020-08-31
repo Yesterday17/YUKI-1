@@ -1,10 +1,10 @@
 import Config from './Config'
 
 export default class DefaultConfig extends Config {
-  public getFilename (): string {
+  public getFilename(): string {
     return 'config'
   }
-  protected getDefaultObject (): yuki.Config.Default {
+  protected getDefaultObject(): yuki.Config.Default {
     return {
       localeChangers: {
         localeEmulator: { name: 'Locale Emulator', enable: false, exec: '' },
@@ -27,15 +27,10 @@ export default class DefaultConfig extends Config {
           url: 'https://translate.google.cn/m'
         },
         {
-          enable: false,
-          method: 'POST',
-          name: '彩云',
-          requestBodyFormat:
-            'J{"source": %TEXT%, "trans_type": "ja2zh", ' +
-            '"request_id": "demo", "detect": "true"}',
-          requestHeaders: '{"X-Authorization": "token 3975l6lr5pcbvidl6jl2"}',
-          responseBodyPattern: 'J%RESPONSE%.target',
-          url: 'https://api.interpreter.caiyunai.com/v1/translator'
+          enable: true,
+          external: true,
+          jsFile: 'config\\caiyunApi.js',
+          name: '彩云'
         },
         {
           enable: true,
@@ -68,11 +63,18 @@ export default class DefaultConfig extends Config {
           name: '百度开放平台'
         }
       ],
-      translators: { jBeijing: { enable: false, path: '', dictPath: '' } },
       dictionaries: { lingoes: { enable: false, path: '' } },
-      mecab: { enable: false, path: '' },
+      translators: { jBeijing: { enable: false, path: '', dictPath: '' } },
       librariesRepoUrl:
         'https://github.com/project-yuki/libraries/raw/master/_pack/',
+      native: {
+        path: '',
+        listen: 'http://localhost:8080',
+        mecab: true,
+        translators: {
+          jBeijing: { enable: false, path: '' }
+        }
+      },
       language: 'zh'
     }
   }

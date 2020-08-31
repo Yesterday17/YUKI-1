@@ -1,6 +1,6 @@
 declare namespace yuki {
   export interface Middleware<T> {
-    process: (context: T, next: (newContext: T) => void) => void
+    process: (context: T) => Promise<T>
   }
 
   export type MeCabPattern = {
@@ -35,9 +35,9 @@ declare namespace yuki {
       }>
     }>
   }
-  
+
   export interface Process {
-    name: string, 
+    name: string,
     pid: number
   }
   export type Processes = Process[]

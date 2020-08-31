@@ -8,7 +8,7 @@ export default class TextInterceptorMiddleware
   private shouldBeIgnorePatterns: string[]
   private ignoreAsciiOnly: boolean
 
-  constructor (config: yuki.Config.Texts['interceptor']) {
+  constructor(config: yuki.Config.Texts['interceptor']) {
     this.shouldBeIgnorePatterns = config.shouldBeIgnore
     this.ignoreAsciiOnly = config.ignoreAsciiOnly
     this.maxLength = config.maxLength
@@ -17,25 +17,22 @@ export default class TextInterceptorMiddleware
     debug('initialized')
   }
 
-  public process (
-    context: yuki.TextOutputObject,
-    next: (newContext: yuki.TextOutputObject) => void
-  ) {
-    if (this.textShouldBeIgnore(context.text)) return
-    if (this.ignoreAsciiOnly && this.isAsciiOnly(context.text)) return
+  public async process(context: yuki.TextOutputObject): Promise<yuki.TextOutputObject> {
+    if (this.textShouldBeIgnore(context.text)) throw "ignore"
+    if (this.ignoreAsciiOnly && this.isAsciiOnly(context.text)) throw "ignore"
 
-    next(context)
+    return context
   }
 
-  public textShouldBeIgnore (text: string): boolean {
+  public textShouldBeIgnore(text: string): boolean {
     return this.isTooLong(text) || this.containsShouldBeIgnorePattern(text)
   }
 
-  private isTooLong (text: string) {
+  private isTooLong(text: string) {
     return text.length > this.maxLength
   }
 
-  private containsShouldBeIgnorePattern (text: string) {
+  private containsShouldBeIgnorePattern(text: string) {
     for (const pattern of this.shouldBeIgnorePatterns) {
       if (text.indexOf(pattern) > -1) {
         return true
@@ -44,7 +41,7 @@ export default class TextInterceptorMiddleware
     return false
   }
 
-  private isAsciiOnly (text: string) {
+  private isAsciiOnly(text: string) {
     return /^[\x00-\xFF]*$/.test(text)
   }
 }

@@ -1,6 +1,6 @@
 declare namespace yuki {
   namespace Config {
-    export interface Config {}
+    export interface Config { }
 
     export interface LocaleChangerItems {
       [id: string]: LocaleChangerItem
@@ -42,11 +42,20 @@ declare namespace yuki {
       localeChangers: LocaleChangerItems
       onlineApis: OnlineApiItem[]
       dictionaries: Dictionaries
+      native: YukiNative
+    }
+
+    export interface YukiNative {
+      path: string
+      listen: string
+      mecab: boolean
+      translators: {
+        jBeijing: JBeijing
+      }
     }
 
     export interface Libraries {
       librariesRepoUrl: string
-      mecab: LibraryItem
       translators: {
         jBeijing: JBeijing
       }
@@ -93,6 +102,6 @@ declare namespace yuki {
       }
     }
 
-    export interface Games extends Array<Game>, Config {}
+    export interface Games extends Array<Game>, Config { }
   }
 }

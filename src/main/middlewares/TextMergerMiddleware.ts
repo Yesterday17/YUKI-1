@@ -17,7 +17,7 @@ export default class TextMergerMiddleware
   private enable: boolean
   private timeout: number
 
-  constructor (config: yuki.Config.Texts['merger']) {
+  constructor(config: yuki.Config.Texts['merger']) {
     this.enable = config.enable
     this.timeout = config.timeout
       ? config.timeout
@@ -25,37 +25,36 @@ export default class TextMergerMiddleware
     debug('initialized', this.enable)
   }
 
-  public process (
-    context: yuki.TextOutputObject,
-    next: (newContext: yuki.TextOutputObject) => void
-  ) {
+  public async process(context: yuki.TextOutputObject): Promise<yuki.TextOutputObject> {
     if (!this.enable) {
       this.textStore[context.handle] = []
       this.textStore[context.handle].push(context.text)
       this.threadStore[context.handle] = context
-      next(context)
-      return
+      return context
     }
 
     if (!this.isStoreEmpty(context.handle)) {
       this.textStore[context.handle].push(context.text)
-      return
+      throw "store is not empty"
     }
 
     this.textStore[context.handle] = []
     this.textStore[context.handle].push(context.text)
     this.threadStore[context.handle] = context
-    setTimeout(() => {
-      context.text = this.textStore[context.handle]
-        .join('')
-        .replace(/[\r\n]/g, '')
-      delete this.textStore[context.handle]
-      this.threadStore[context.handle] = undefined
-      next(context)
-    }, this.timeout)
+
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        context.text = this.textStore[context.handle]
+          .join('')
+          .replace(/[\r\n]/g, '')
+        delete this.textStore[context.handle]
+        this.threadStore[context.handle] = undefined
+        resolve(context)
+      }, this.timeout)
+    })
   }
 
-  private isStoreEmpty (handle: number): boolean {
+  private isStoreEmpty(handle: number): boolean {
     return this.threadStore[handle] === undefined
   }
 }
