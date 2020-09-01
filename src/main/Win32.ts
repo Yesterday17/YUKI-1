@@ -14,24 +14,24 @@ export function registerProcessExitCallback(
   doRegister(pids, callback, 0)
 }
 
-export function registerWindowMinimizeStartCallback(
+export function registerWindowMinimizeCallback(
   handle: number,
   callback: () => void
-): boolean {
+) {
+  YukiNativeBridge.getInstance().fetchMinimize(handle)
   Win32Events.instance.on('minimize', () => {
-    //
+    callback()
   })
-  return true
 }
 
-export function registerWindowMinimizeEndCallback(
+export function registerWindowRestoreCallback(
   handle: number,
   callback: () => void
-): boolean {
-  Win32Events.instance.on('recover', () => {
-    //
+) {
+  YukiNativeBridge.getInstance().fetchRestore(handle)
+  Win32Events.instance.on('restore', () => {
+    callback()
   })
-  return true
 }
 
 function doRegister(pids: number[], callback: () => void, index: number) {

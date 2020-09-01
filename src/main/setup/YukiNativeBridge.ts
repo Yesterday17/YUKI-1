@@ -24,6 +24,10 @@ export default class YukiNativeBridge {
       'lib/textractor/TextractorCLI.exe'
     )])
 
+    command.stdout.on('data', (data) => {
+      debug(data.toString())
+    })
+
     debug('spawned')
 
     this.fetchPing().then((success) => {
@@ -70,9 +74,21 @@ export default class YukiNativeBridge {
     await this.nativeFetch('/textractor', `${pid}|${code}`)
   }
 
+  ///////////////////////////////////////////////////////////////////
+
   async fetchWatchProcessExit(pid: number) {
     await this.nativeFetch('/win32/exit', `${pid}`)
   }
+
+  async fetchMinimize(pid: number) {
+    await this.nativeFetch('/win32/minimize', `${pid}`)
+  }
+
+  async fetchRestore(pid: number) {
+    await this.nativeFetch('/win32/restore', `${pid}`)
+  }
+
+  ///////////////////////////////////////////////////////////////////
 
   registerListener<T>(event: string, listener: (result: T) => void) {
     this.emitter.on(event, listener)
@@ -104,11 +120,7 @@ export default class YukiNativeBridge {
               this.emitter.emit('textractor-output', { ...message.message })
               break
             case 'win32':
-              switch (message.message.event) {
-                case 'exit':
-                  Win32Events.instance.emit('exit', message.message.value)
-                  break
-              }
+              Win32Events.instance.emit(message.message.event, message.message.value)
               break
           }
         }

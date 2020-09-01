@@ -58,10 +58,10 @@ export default function (mainWindow: Electron.BrowserWindow) {
         translatorWindow = new TranslatorWindow()
         translatorWindow.setGame(runningGame)
       })
-      runningGame.on('minimize-start', () => {
+      runningGame.on('minimize', () => {
         translatorWindow?.getWindow()?.minimize()
       })
-      runningGame.on('minimize-end', () => {
+      runningGame.on('restore', () => {
         translatorWindow?.getWindow()?.restore()
       })
       runningGame.on('exited', () => {
