@@ -42,13 +42,17 @@ export default class YukiNativeBridge {
     await this.nativeFetch('/library', path)
   }
 
-  async fetchJBeijing7(text: string): Promise<string> {
+  async fetchJBeijing7Translation(text: string): Promise<string> {
     try {
       return await this.nativeFetch('/jbeijing7', text)
     } catch (e) {
       debug(`JBeijing7 error: ${e}`)
       return 'error'
     }
+  }
+
+  async fetchJBeijing7OpenUserdict(dict: string[]): Promise<void> {
+    await this.nativeFetch("/jbeijing7/dict", dict.join('\n'))
   }
 
   async fetchMecab(text: string): Promise<string> {
@@ -60,9 +64,8 @@ export default class YukiNativeBridge {
     }
   }
 
-  async fetchTextractor(pid: number, code: string, callback: () => void) {
+  async fetchTextractor(pid: number, code: string = '') {
     await this.nativeFetch('/textractor', `${pid}|${code}`)
-    callback()
   }
 
   registerListener<T>(event: string, listener: (result: T) => void) {
@@ -78,6 +81,7 @@ export default class YukiNativeBridge {
     return await resp.text()
   }
 
+  wsRetry: number = 0;
   async initializeWebSocketClient() {
     this.ws = new WebSocketClient()
     this.ws.on('connect', (conn) => {
@@ -95,7 +99,11 @@ export default class YukiNativeBridge {
       })
 
       conn.on('close', () => {
-        debug('WebSocket connection closed')
+        debug('WebSocket connection closed, reconnecting...')
+        const next = setTimeout(() => {
+          this.initializeWebSocketClient()
+          clearTimeout(next)
+        }, 3000)
       })
     })
     this.ws.connect(`ws://${this.baseUrl}/ws`)

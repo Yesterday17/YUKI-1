@@ -4,7 +4,7 @@ const debug = require('debug')('yuki:translationManager')
 import ExternalApi from './ExternalApi'
 
 export default class TranslationManager {
-  public static getInstance (): TranslationManager {
+  public static getInstance(): TranslationManager {
     if (!this.instance) {
       this.instance = new TranslationManager()
     }
@@ -12,9 +12,9 @@ export default class TranslationManager {
   }
   private static instance: TranslationManager | undefined
 
-  private apis: {[name: string]: yuki.Translator} = {}
+  private apis: { [name: string]: yuki.Translator } = {}
 
-  public initializeApis (
+  public initializeApis(
     apis: yuki.Config.Default['onlineApis']
   ): TranslationManager {
     this.apis = {}
@@ -32,8 +32,8 @@ export default class TranslationManager {
     return this
   }
 
-  public initializeTranslators (
-    translators: yuki.Config.Default['translators']
+  public initializeTranslators(
+    translators: yuki.Config.Default['native']['translators']
   ) {
     if (translators.jBeijing && translators.jBeijing.enable) {
       const jb = new JBeijingAdapter(translators.jBeijing)
@@ -41,7 +41,7 @@ export default class TranslationManager {
     }
   }
 
-  public translate (
+  public translate(
     text: string,
     callback: (translation: yuki.Translations['translations']) => void
   ) {

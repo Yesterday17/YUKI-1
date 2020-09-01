@@ -85,18 +85,10 @@ onlineApis:
     external: true
     jsFile: config\newBaiduApi.js
     name: 百度开放平台
-translators:
-  jBeijing:
-    dictPath: 'C:\YUKI\yuki\lib\dict\jb'
-    enable: true
-    path: 'C:\JBeijing7'
 dictionaries:
   lingoes:
     enable: true
     path: 'C:\YUKI\libraries\dict\lingoes\njcd.db'
-mecab:
-  enable: true
-  path: 'C:\YUKI\libraries\pos\mecab-ipadic'
 librariesRepoUrl: 'https://github.com/project-yuki/libraries/raw/master/_pack/'
 language: zh
 ```

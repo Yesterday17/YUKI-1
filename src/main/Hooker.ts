@@ -58,12 +58,16 @@ export default class Hooker {
 
   public injectProcess(pid: number) {
     debug('injecting process %d...', pid)
-    YukiNativeBridge.getInstance().fetchTextractor(pid, '', () => debug('process %d injected', pid))
+    YukiNativeBridge.getInstance().fetchTextractor(pid)
+      .then(() => debug('process %d injected', pid))
+      .catch(() => debug('failed to inject to process %d', pid))
   }
 
   public insertHook(pid: number, code: string) {
     debug('inserting hook %s to process %d...', code, pid)
-    YukiNativeBridge.getInstance().fetchTextractor(pid, code, () => debug(`hook %s inserted into process %d`, code, pid))
+    YukiNativeBridge.getInstance().fetchTextractor(pid, code)
+      .then(() => debug(`hook %s inserted into process %d`, code, pid))
+      .catch(() => debug('failed to hook %s into process %d', code, pid))
   }
 
   private buildApplication() {

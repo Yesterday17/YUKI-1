@@ -56,9 +56,6 @@ declare namespace yuki {
 
     export interface Libraries {
       librariesRepoUrl: string
-      translators: {
-        jBeijing: JBeijing
-      }
     }
 
     export interface Dictionaries {

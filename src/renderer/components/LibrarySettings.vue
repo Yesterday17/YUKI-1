@@ -4,6 +4,7 @@
   "zh": {
     "appLibrariesSettings": "程序库设置",
     "providedByDefault": "默认已提供，位于lib\\textractor目录下",
+    "providedByYukiNative": "由 YukiNative 提供",
     "choose...": "选择...",
     "jBeijingDict": "J 北京辞書",
     "pleaseSelect1": "请选择目录下的",
@@ -16,6 +17,7 @@
   "en": {
     "appLibrariesSettings": "App Libraries Settings",
     "providedByDefault": "Provided by default, located in lib\\textractor directory",
+    "providedByYukiNative": "Provided by YukiNative",
     "choose...": "Choose...",
     "jBeijingDict": "JBeijing Dict (Chinese only)",
     "pleaseSelect1": "Please select",
@@ -37,25 +39,9 @@
     <p>{{$t('providedByDefault')}}</p>
 
     <p class="text-h2">MeCab</p>
+    <p>{{$t('providedByYukiNative')}}</p>
     <v-row>
-      <v-col cols="10">
-        <v-text-field
-          :label="$t('path')"
-          v-model="tempLibraries.mecab.path"
-          readonly
-          append-icon="mdi-dots-horizontal"
-          @click:append="requestPath('mecab', 'libmecab.dll', '.')"
-        />
-      </v-col>
-      <v-col cols="2">
-        <v-switch
-          :label="$t('enable')"
-          @change="saveSettings(false)"
-          :disabled="canSaveMecab"
-          v-model="tempLibraries.mecab.enable"
-          inset
-        ></v-switch>
-      </v-col>
+      <v-switch :label="$t('enable')" @change="saveSettings(false)" :disabled="true" inset></v-switch>
     </v-row>
 
     <p class="text-h2">{{$t('lingoes')}}</p>
@@ -84,10 +70,7 @@
     <yk-download-progress v-if="jbdictDownloadState" :state="jbdictDownloadState" />
     <v-row style="width: 100%">
       <v-col cols="10">
-        <v-text-field
-          :label="$t('path')"
-          v-model="tempLibraries.translators.jBeijing.dictPath"
-        />
+        <!-- <v-text-field :label="$t('path')" v-model="tempLibraries.translators.jBeijing.dictPath" /> -->
       </v-col>
       <v-col cols="2">
         <v-btn
@@ -105,112 +88,97 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import { Component, Watch } from 'vue-property-decorator'
-import { namespace, State } from 'vuex-class'
+import Vue from "vue";
+import { Component, Watch } from "vue-property-decorator";
+import { namespace, State } from "vuex-class";
 
-import { ipcRenderer } from 'electron'
-import { join } from 'path'
-import IpcTypes from '../../common/IpcTypes'
+import { ipcRenderer } from "electron";
+import { join } from "path";
+import IpcTypes from "../../common/IpcTypes";
 
-import YkDownloadProgress from '@/components/DownloadProgress.vue'
+import YkDownloadProgress from "@/components/DownloadProgress.vue";
 
 @Component({
   components: {
-    YkDownloadProgress
-  }
+    YkDownloadProgress,
+  },
 })
 export default class LibrarySettings extends Vue {
-  @namespace('Config').State('default')
-  public defaultConfig!: yuki.ConfigState['default']
-  @namespace('Config').State('librariesBaseStorePath')
-  public librariesBaseStorePath!: string
+  @(namespace("Config").State("default"))
+  public defaultConfig!: yuki.ConfigState["default"];
+  @(namespace("Config").State("librariesBaseStorePath"))
+  public librariesBaseStorePath!: string;
 
   public tempLibraries: yuki.Config.Libraries & {
     dictionaries: yuki.Config.Dictionaries;
   } = {
-    librariesRepoUrl: '',
-    mecab: {
-      enable: false,
-      path: ''
-    },
-    translators: {
-      jBeijing: {
-        enable: false,
-        path: '',
-        traditionalChinese: false,
-        dictPath: ''
-      }
-    },
+    librariesRepoUrl: "",
 
     dictionaries: {
       lingoes: {
         enable: false,
-        path: ''
-      }
-    }
-  }
+        path: "",
+      },
+    },
+  };
 
   public downloading: { dictjb: boolean } = {
-    dictjb: false
+    dictjb: false,
+  };
+
+  get canSaveLingoes() {
+    return this.tempLibraries.dictionaries.lingoes.path === "";
   }
 
-  get canSaveMecab () {
-    return this.tempLibraries.mecab.path === ''
-  }
+  public jbdictDownloadState: RequestProgress.ProgressState | boolean = false;
 
-  get canSaveLingoes () {
-    return this.tempLibraries.dictionaries.lingoes.path === ''
-  }
+  public remainingDownloadTaskCount = 0;
 
-  public jbdictDownloadState: RequestProgress.ProgressState | boolean = false
-
-  public remainingDownloadTaskCount = 0
-
-  public saveSettings (showToast: boolean) {
+  public saveSettings(showToast: boolean) {
     const savingConfig = {
       ...this.defaultConfig,
-      ...this.tempLibraries
-    }
-    ipcRenderer.send(IpcTypes.REQUEST_SAVE_CONFIG, 'default', savingConfig)
+      ...this.tempLibraries,
+    };
+    ipcRenderer.send(IpcTypes.REQUEST_SAVE_CONFIG, "default", savingConfig);
     if (showToast) {
-      this.$dialog.notify.success(this.$i18n.t('saved').toString())
+      this.$dialog.notify.success(this.$i18n.t("saved").toString());
     }
   }
 
-  public requestPath (library: string, filename: string, suffix: string) {
+  public requestPath(library: string, filename: string, suffix: string) {
     ipcRenderer.once(
       IpcTypes.HAS_PATH_WITH_FILE,
       (event: Electron.Event, path: string) => {
         if (path.indexOf(filename) === -1) {
           this.$dialog.notify.error(
             `${this.$i18n
-              .t('pleaseSelect1')
+              .t("pleaseSelect1")
               .toString()} ${filename} ${this.$i18n
-              .t('pleaseSelect2')
+              .t("pleaseSelect2")
               .toString()}!`
-          )
-          return
+          );
+          return;
         }
 
-        if (library === 'mecab') {
-          this.tempLibraries[library].path = join(
-            path.substring(0, path.indexOf(filename) - 1),
-            suffix
-          )
-        } else if (library === 'lingoes') {
+        // if (library === "mecab") {
+        //   this.tempLibraries[library].path = join(
+        //     path.substring(0, path.indexOf(filename) - 1),
+        //     suffix
+        //   );
+        // } else
+        if (library === "lingoes") {
           this.tempLibraries.dictionaries[library].path = join(
             path.substring(0, path.indexOf(filename) - 1),
             suffix
-          )
+          );
         }
       }
-    )
-    ipcRenderer.send(IpcTypes.REQUEST_PATH_WITH_FILE, filename)
+    );
+    ipcRenderer.send(IpcTypes.REQUEST_PATH_WITH_FILE, filename);
   }
 
-  public startDownload (packName: string) {
-    const _this = this
+  public startDownload(packName: string) {
+    const _this = this;
     ipcRenderer.on(
       IpcTypes.HAS_DOWNLOAD_PROGRESS,
       (
@@ -219,68 +187,60 @@ export default class LibrarySettings extends Vue {
         state: RequestProgress.ProgressState
       ) => {
         switch (name) {
-          case 'dict.jb':
-            this.jbdictDownloadState = state
-            break
+          case "dict.jb":
+            this.jbdictDownloadState = state;
+            break;
         }
       }
-    )
+    );
     ipcRenderer.on(
       IpcTypes.HAS_DOWNLOAD_COMPLETE,
       (event: Electron.Event, name: string, err: string | undefined) => {
-        this.remainingDownloadTaskCount--
+        this.remainingDownloadTaskCount--;
         if (this.remainingDownloadTaskCount <= 0) {
-          ipcRenderer.removeAllListeners(IpcTypes.HAS_DOWNLOAD_PROGRESS)
-          ipcRenderer.removeAllListeners(IpcTypes.HAS_DOWNLOAD_COMPLETE)
+          ipcRenderer.removeAllListeners(IpcTypes.HAS_DOWNLOAD_PROGRESS);
+          ipcRenderer.removeAllListeners(IpcTypes.HAS_DOWNLOAD_COMPLETE);
         }
-        this.downloading[name.replace('.', '')] = false
+        this.downloading[name.replace(".", "")] = false;
 
         if (err) {
           _this.$dialog.notify.error(
-            `${name} ${_this.$i18n.t('failed').toString()}: ${err}`
-          )
-          return
+            `${name} ${_this.$i18n.t("failed").toString()}: ${err}`
+          );
+          return;
         }
 
         _this.$dialog.notify.success(
-          `${name} ${_this.$i18n.t('installed').toString()}`
-        )
+          `${name} ${_this.$i18n.t("installed").toString()}`
+        );
         switch (name) {
-          case 'dict.jb':
-            this.resetSettings()
-            this.jbdictDownloadState = false
-            this.tempLibraries.translators.jBeijing.dictPath = `${
-              this.librariesBaseStorePath
-            }\\dict\\jb`
-            this.saveSettings(false)
-            break
+          case "dict.jb":
+            this.resetSettings();
+            this.jbdictDownloadState = false;
+            // this.tempLibraries.translators.jBeijing.dictPath = `${this.librariesBaseStorePath}\\dict\\jb`;
+            this.saveSettings(false);
+            break;
         }
       }
-    )
+    );
 
     this.$dialog.notify.info(
-      `${this.$i18n.t('nowDownloading').toString()} ${packName}...`
-    )
-    this.remainingDownloadTaskCount++
-    this.downloading[packName.replace('.', '')] = true
-    ipcRenderer.send(IpcTypes.REQUEST_DOWNLOAD_LIBRARY, packName)
+      `${this.$i18n.t("nowDownloading").toString()} ${packName}...`
+    );
+    this.remainingDownloadTaskCount++;
+    this.downloading[packName.replace(".", "")] = true;
+    ipcRenderer.send(IpcTypes.REQUEST_DOWNLOAD_LIBRARY, packName);
   }
 
-  @Watch('defaultConfig', {
+  @Watch("defaultConfig", {
     immediate: true,
-    deep: true
+    deep: true,
   })
-  public resetSettings () {
-    this.tempLibraries.mecab = {
-      ...this.defaultConfig.mecab
-    }
-    this.tempLibraries.translators.jBeijing = {
-      ...this.defaultConfig.translators.jBeijing
-    }
-    this.tempLibraries.librariesRepoUrl = this.defaultConfig.librariesRepoUrl
+  public resetSettings() {
+    this.tempLibraries.librariesRepoUrl = this.defaultConfig.librariesRepoUrl;
     this.tempLibraries.dictionaries.lingoes = {
-      ...this.defaultConfig.dictionaries.lingoes
-    }
+      ...this.defaultConfig.dictionaries.lingoes,
+    };
   }
 }
 </script>
