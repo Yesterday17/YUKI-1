@@ -1,10 +1,20 @@
 declare namespace yuki {
   export interface TextractorPushMessage {
-    type: 'textractor';
+    type: 'textractor'
     message: TextOutputObject
   }
 
-  export type WebSocketPushMessage = TextractorPushMessage
+  export interface Win32PushMessage {
+    type: 'win32'
+    message: Win32ExitEvent
+  }
+
+  export interface Win32ExitEvent {
+    event: 'exit',
+    value: number
+  }
+
+  export type WebSocketPushMessage = TextractorPushMessage | Win32PushMessage
 
   export interface Middleware<T> {
     process: (context: T) => Promise<T>

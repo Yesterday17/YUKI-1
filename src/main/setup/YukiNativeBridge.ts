@@ -3,6 +3,7 @@ import * as path from 'path';
 import { spawn } from 'child_process'
 import { client as WebSocketClient } from 'websocket'
 import { EventEmitter } from 'events';
+import { Win32Events } from '../Win32';
 const debug = require('debug')('yuki:native')
 
 export default class YukiNativeBridge {
@@ -18,10 +19,11 @@ export default class YukiNativeBridge {
   initializeYukiNative(config: yuki.Config.Default['native']) {
     this.baseUrl = config.listen
 
-    spawn(config.path, ['-t', path.join(
+    const command = spawn(config.path, ['-t', path.join(
       global.__baseDir,
       'lib/textractor/TextractorCLI.exe'
-    )]);
+    )])
+
     debug('spawned')
 
     this.fetchPing().then((success) => {
@@ -68,12 +70,17 @@ export default class YukiNativeBridge {
     await this.nativeFetch('/textractor', `${pid}|${code}`)
   }
 
+  async fetchWatchProcessExit(pid: number) {
+    await this.nativeFetch('/win32/exit', `${pid}`)
+  }
+
   registerListener<T>(event: string, listener: (result: T) => void) {
     this.emitter.on(event, listener)
   }
 
   async nativeFetch(path: string, body?: string): Promise<string> {
-    const resp = await fetch('http://' + this.baseUrl + path, { method: body ? 'POST' : 'GET', body: body })
+    debug(path)
+    const resp = await fetch('http://' + this.baseUrl + path, { method: 'POST', body: body })
 
     if (resp.status !== 200) {
       throw resp.status
@@ -91,9 +98,18 @@ export default class YukiNativeBridge {
         if (msg.type === 'utf8') {
           const message = JSON.parse(msg.utf8Data as string) as yuki.WebSocketPushMessage
 
+          debug(message.message)
           switch (message.type) {
             case 'textractor':
               this.emitter.emit('textractor-output', { ...message.message })
+              break
+            case 'win32':
+              switch (message.message.event) {
+                case 'exit':
+                  Win32Events.instance.emit('exit', message.message.value)
+                  break
+              }
+              break
           }
         }
       })
