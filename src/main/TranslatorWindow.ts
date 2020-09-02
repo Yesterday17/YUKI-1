@@ -4,7 +4,7 @@ import ConfigManager from './config/ConfigManager'
 import Game from './Game'
 import Hooker from './Hooker'
 const debug = require('debug')('yuki:translatorWindow')
-const ElectronVibrancy = require('electron-vibrancy')
+// const ElectronVibrancy = require('electron-vibrancy')
 
 export default class TranslatorWindow {
   private readonly URL =
@@ -23,32 +23,32 @@ export default class TranslatorWindow {
     return this.instance;
   }
 
-  constructor () {
+  constructor() {
     this.create()
     TranslatorWindow.instance = this;
   }
 
-  public getWindow () {
+  public getWindow() {
     return this.window
   }
 
-  public close () {
+  public close() {
     this.isRealClose = true
     this.unsubscribeHookerEvents()
     this.window.close()
   }
 
-  public setGame (game: BaseGame) {
+  public setGame(game: BaseGame) {
     this.game = game
   }
 
-  public getGameInfo (): yuki.Game {
+  public getGameInfo(): yuki.Game {
     return this.game.getInfo()
   }
 
-  private create () {
+  private create() {
     this.config = ConfigManager.getInstance().get<yuki.Config.Gui>('gui')
-                  .translatorWindow
+      .translatorWindow
     this.window = new BrowserWindow({
       webPreferences: {
         defaultFontFamily: {
@@ -73,7 +73,8 @@ export default class TranslatorWindow {
     this.window.on('ready-to-show', () => {
       // choose translucent as default, unless assigning transparent explicitly
       if (this.config.renderMode !== 'transparent') {
-        ElectronVibrancy.SetVibrancy(this.window, 0)
+        // ElectronVibrancy.SetVibrancy(this.window, 0)
+        // FIXME
       }
 
       debug('subscribing hooker events...')
@@ -112,11 +113,11 @@ export default class TranslatorWindow {
     this.window.loadURL(this.URL)
   }
 
-  private subscribeHookerEvents () {
+  private subscribeHookerEvents() {
     Hooker.getInstance().subscribe('thread-output', this.window.webContents)
   }
 
-  private unsubscribeHookerEvents () {
+  private unsubscribeHookerEvents() {
     Hooker.getInstance().unsubscribe('thread-output', this.window.webContents)
   }
 }
