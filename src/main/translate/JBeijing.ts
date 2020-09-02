@@ -12,7 +12,7 @@ export default class JBeijing {
     this.exePath = exePath
     try {
       this.checkExePathAndThrow()
-      YukiNativeBridge.getInstance().loadLibrary(this.exePath)
+      YukiNativeBridge.instance.loadLibrary(this.exePath)
       this.checkDictDir()
     } catch (e) {
       return
@@ -27,13 +27,13 @@ export default class JBeijing {
 
     const dics = this.findAvailableUserdicPaths(dicPath)
     debug(dics)
-    YukiNativeBridge.getInstance().fetchJBeijing7OpenUserdict(dics)
+    YukiNativeBridge.instance.fetchJBeijing7OpenUserdict(dics)
       .then(() => debug('user dict loaded'))
       .catch(() => debug('cannot load user dict. abort'))
   }
 
   public translate(text: string, destCodePage: number, callback: (translation: string) => void) {
-    YukiNativeBridge.getInstance().fetchJBeijing7Translation(text).then((translated) => {
+    YukiNativeBridge.instance.fetchJBeijing7Translation(text).then((translated) => {
       callback(translated);
     })
   }

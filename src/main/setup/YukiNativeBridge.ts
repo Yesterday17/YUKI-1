@@ -1,31 +1,28 @@
-import fetch from 'node-fetch'
-import * as path from 'path';
-import { spawn } from 'child_process'
-import { client as WebSocketClient } from 'websocket'
+import { spawn } from 'child_process';
 import { EventEmitter } from 'events';
-import { Win32Events } from '../Win32';
+import fetch from 'node-fetch';
+import * as path from 'path';
+import { client as WebSocketClient } from 'websocket';
 const debug = require('debug')('yuki:native')
 
-export default class YukiNativeBridge {
-  private static instance = new YukiNativeBridge();
-  static getInstance(): YukiNativeBridge {
-    return YukiNativeBridge.instance
-  }
+export default class YukiNativeBridge extends EventEmitter {
+  public static readonly instance = new YukiNativeBridge();
 
   private baseUrl: string = ''
   private ws?: WebSocketClient;
-  private emitter = new EventEmitter();
+  public readonly win32 = new EventEmitter();
 
   initializeYukiNative(config: yuki.Config.Default['native']) {
     this.baseUrl = config.listen
 
-    const command = spawn(config.path, ['-t', path.join(
-      global.__baseDir,
-      'lib/textractor/TextractorCLI.exe'
-    )])
+    const command = spawn(config.path, { cwd: path.dirname(config.path) })
 
     command.stdout.on('data', (data) => {
       debug(data.toString())
+    })
+
+    command.on('close', () => {
+      debug('closed')
     })
 
     debug('spawned')
@@ -90,12 +87,7 @@ export default class YukiNativeBridge {
 
   ///////////////////////////////////////////////////////////////////
 
-  registerListener<T>(event: string, listener: (result: T) => void) {
-    this.emitter.on(event, listener)
-  }
-
   async nativeFetch(path: string, body?: string): Promise<string> {
-    debug(path)
     const resp = await fetch('http://' + this.baseUrl + path, { method: 'POST', body: body })
 
     if (resp.status !== 200) {
@@ -117,10 +109,10 @@ export default class YukiNativeBridge {
           debug(message.message)
           switch (message.type) {
             case 'textractor':
-              this.emitter.emit('textractor-output', { ...message.message })
+              this.emit('textractor', { ...message.message })
               break
             case 'win32':
-              Win32Events.instance.emit(message.message.event, message.message.value)
+              this.win32.emit(message.message.event, message.message.value)
               break
           }
         }

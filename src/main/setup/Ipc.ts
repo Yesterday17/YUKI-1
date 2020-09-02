@@ -30,7 +30,7 @@ export default function (mainWindow: Electron.BrowserWindow) {
 
   ipcMain.on(IpcTypes.MAIN_PAGE_LOAD_FINISHED, () => {
     debug('main page load finished. starting apis...')
-    YukiNativeBridge.getInstance().initializeYukiNative(
+    YukiNativeBridge.instance.initializeYukiNative(
       ConfigManager.getInstance().get<yuki.Config.Default>('default').native
     )
     TranslationManager.getInstance().initializeApis(

@@ -3,10 +3,6 @@ import { EventEmitter } from 'events'
 import YukiNativeBridge from './setup/YukiNativeBridge'
 
 
-export class Win32Events extends EventEmitter {
-  public static readonly instance = new Win32Events()
-}
-
 export function registerProcessExitCallback(
   pids: number[],
   callback: () => void
@@ -18,8 +14,8 @@ export function registerWindowMinimizeCallback(
   handle: number,
   callback: () => void
 ) {
-  YukiNativeBridge.getInstance().fetchMinimize(handle)
-  Win32Events.instance.on('minimize', () => {
+  YukiNativeBridge.instance.fetchMinimize(handle)
+  YukiNativeBridge.instance.win32.on('minimize', () => {
     callback()
   })
 }
@@ -28,8 +24,8 @@ export function registerWindowRestoreCallback(
   handle: number,
   callback: () => void
 ) {
-  YukiNativeBridge.getInstance().fetchRestore(handle)
-  Win32Events.instance.on('restore', () => {
+  YukiNativeBridge.instance.fetchRestore(handle)
+  YukiNativeBridge.instance.win32.on('restore', () => {
     callback()
   })
 }
@@ -42,9 +38,9 @@ function doRegister(pids: number[], callback: () => void, index: number) {
 
   debug('registering process exit callback at pid %d...', pids[index])
 
-  YukiNativeBridge.getInstance().fetchWatchProcessExit(pids[index])
+  YukiNativeBridge.instance.fetchWatchProcessExit(pids[index])
 
-  Win32Events.instance.on('exit', (pid: number) => {
+  YukiNativeBridge.instance.win32.on('exit', (pid: number) => {
     if (pid === pids[index]) {
       doRegister(pids, callback, index + 1)
     }

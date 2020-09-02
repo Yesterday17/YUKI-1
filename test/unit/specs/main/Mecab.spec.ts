@@ -8,7 +8,7 @@ import YukiNativeBridge from '../../../../src/main/setup/YukiNativeBridge'
 
 describe('MeCab', () => {
   before(() => {
-    YukiNativeBridge.getInstance().initializeYukiNative({
+    YukiNativeBridge.instance.initializeYukiNative({
       path: `D:\\Code\\YukiNative\\YukiNative\\bin\\Debug\\net472\\YukiNative.exe`,
       listen: 'localhost:8080',
       mecab: true,
