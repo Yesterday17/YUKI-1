@@ -15,6 +15,11 @@ export default class YukiNativeBridge extends EventEmitter {
   initializeYukiNative(config: yuki.Config.Default['native']) {
     this.baseUrl = config.listen
 
+    if (!config.path) {
+      debug('unavailable')
+      return
+    }
+
     const command = spawn(config.path, { cwd: path.dirname(config.path) })
 
     command.stdout.on('data', (data) => {
