@@ -4,7 +4,7 @@ version: 0.1.{build}
 
 branches:
   only:
-    - master
+    - main
 
 image: Visual Studio 2019
 platform:
@@ -20,14 +20,12 @@ init:
   - git config --global core.autocrlf input
 
 install:
-  - ps: Install-Product node 10 x86
-  - npm install -g npm@6.11.3
+  - ps: Install-Product node 12 x64
   - git reset --hard HEAD
   - yarn
   - node --version
 
 build_script:
-  #- yarn test
   - yarn build:dir
 
 after_build:
@@ -41,13 +39,13 @@ artifacts:
     name: YUKI
 
 deploy:
-  release: v$(appveyor_build_version)
-  provider: GitHub
-  auth_token:
-    secure: jrOwWRtwmimOB6Wn0mZkhkzdoXCVg7kpYi8RHYWLKYNF/5C/MNY/+E0Px+OvGc58
-  artifact: YUKI.zip
-  draft: true
-  prerelease: false
-  on:
-    branch: master
-    APPVEYOR_REPO_TAG: false
+  - provider: GitHub
+    release: v$(appveyor_build_version)
+    auth_token:
+      secure: "JvFUxsBhi6+L7zxg90iWxP89a22tzMOLonNQkav2NVnLKzhOrsxlprUieuQJwmMe"
+    artifact: YUKI
+    draft: true
+    prerelease: true
+    on:
+      branch: main
+      APPVEYOR_REPO_TAG: false

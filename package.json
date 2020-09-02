@@ -1,6 +1,6 @@
 {
   "name": "yuki",
-  "version": "0.1.0",
+  "version": "0.14.4",
   "author": "tinyAdapter <tinyadapter@outlook.com>",
   "description": "Yummy Utterance Knowledge Interface",
   "license": "GPL-3.0",
@@ -10,44 +10,16 @@
     "build:dir": "node .electron-vue/build.js && electron-builder --dir",
     "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
     "dev": "chcp 65001 && node .electron-vue/dev-runner.js",
-    "e2e": "npm run pack && mocha test/e2e",
-    "pack": "npm run pack:main && npm run pack:renderer",
+    "e2e": "yarn run pack && mocha test/e2e",
+    "pack": "yarn run pack:main && yarn run pack:renderer",
     "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
-    "test": "npm run unit && npm run e2e",
+    "test": "yarn run unit && yarn run e2e",
     "unit:main": "cross-env NODE_ENV=none karma start test/unit/karma.main.conf.js",
     "unit:renderer": "cross-env NODE_ENV=none karma start test/unit/karma.renderer.conf.js",
     "rebuild": "electron-builder install-app-deps",
-    "postinstall": "npm run rebuild",
+    "postinstall": "yarn run rebuild",
     "tsc": "tsc --noEmit"
-  },
-  "build": {
-    "productName": "YUKI",
-    "appId": "org.project-yuki.yuki",
-    "directories": {
-      "output": "build"
-    },
-    "files": [
-      "dist/electron/**/*",
-      "build/icons/*"
-    ],
-    "extraFiles": [
-      "dict/**/*",
-      "lib/**/*",
-      "config/youdaoApi.js",
-      "config/baiduApi.js",
-      "config/qqApi.js",
-      "config/newBaiduApi.js",
-      "config/azureApi.js",
-      "config/tencentApi.js",
-      "config/caiyunApi.js"
-    ],
-    "win": {
-      "icon": "build/icons/icon.png"
-    }
-  },
-  "config": {
-    "arch": "ia32"
   },
   "dependencies": {
     "axios": "^0.19.0",

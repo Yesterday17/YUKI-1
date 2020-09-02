@@ -1,0 +1,32 @@
+productName: YUKI
+appId: org.project-yuki.yuki
+icon: build/icons/icon.png
+
+directories:
+  output: build
+files:
+  - dist/electron/**/*
+  - build/icons/*
+extraFiles:
+  - dict/**/*
+  - lib/**/*
+  - config/youdaoApi.js
+  - config/baiduApi.js
+  - config/qqApi.js
+  - config/newBaiduApi.js
+  - config/azureApi.js
+  - config/tencentApi.js
+  - config/caiyunApi.js
+
+win:
+  target:
+    - target: zip
+      arch:
+        - x64
+        - ia32
+
+linux:
+  target:
+    - AppImage
+    - zip
+  category: Game
