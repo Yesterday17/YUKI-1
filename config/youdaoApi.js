@@ -1,3 +1,4 @@
+// FIXME
 SESSION_URL = "http://fanyi.youdao.com";
 TRANSLATE_URL =
   "http://fanyi.youdao.com/translate_o?smartresult=dict&smartresult=rule";

@@ -4,23 +4,24 @@ SUBSCRIPTION_KEY = "5ce850af5f37474c91e6911ca36ddc24";
 
 requestTranslation = () => {
   return new Promise((resolve, reject) => {
-    Request.post(AZURE_TRANSLATION_URL, {
+    fetch(AZURE_TRANSLATION_URL, {
+      method: 'POST',
       headers: {
         "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Key": SUBSCRIPTION_KEY
       },
-      json: true,
-      body: [{ Text: text }]
-    }).then(json => {
-      if (json.error) {
-        callback(`Error: ${json.error.message}`);
-      } else {
-        var result = json[0].translations[0].text;
-        callback(result);
-      }
-    }).catch(err => {
-      callback(`error: ${err}`);
-    })
+      body: JSON.stringify({ Text: text })
+    }).then(data => data.json())
+      .then(json => {
+        if (json.error) {
+          callback(`Error: ${json.error.message}`);
+        } else {
+          var result = json[0].translations[0].text;
+          callback(result);
+        }
+      }).catch(err => {
+        callback(`error: ${err}`);
+      })
   })
 }
 requestTranslation();

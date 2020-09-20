@@ -1,8 +1,9 @@
 import * as crypto from 'crypto'
 import * as fs from 'fs'
 import * as path from 'path'
-import * as request from 'request-promise-native'
 import * as vm from 'vm'
+import fetch from 'node-fetch'
+import FormData from 'formdata-node'
 const debug = require('debug')('yuki:api')
 
 export default class ExternalApi implements yuki.Translator {
@@ -68,20 +69,26 @@ export default class ExternalApi implements yuki.Translator {
   }
 
   private createVmContext() {
-    this.responseVmContext = vm.createContext({
-      Buffer,
-      Request: request,
-      text: '',
-      md5: (data: string, encoding: crypto.HexBase64Latin1Encoding) => {
-        const hash = crypto.createHash('md5')
-        return hash.update(data).digest(encoding)
-      },
-      crypto: {
-        createHash: crypto.createHash,
-        createHmac: crypto.createHmac
-      },
-      callback: undefined
-    })
+    try {
+      this.responseVmContext = vm.createContext({
+        Buffer,
+        FormData,
+        URLSearchParams,
+        fetch,
+        text: '',
+        md5: (data: string, encoding: crypto.HexBase64Latin1Encoding) => {
+          const hash = crypto.createHash('md5')
+          return hash.update(data).digest(encoding)
+        },
+        crypto: {
+          createHash: crypto.createHash,
+          createHmac: crypto.createHmac
+        },
+        callback: undefined
+      })
+    } catch (e) {
+      debug(e)
+    }
   }
 
   private registerWatchCallback() {

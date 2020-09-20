@@ -1,3 +1,4 @@
+// FIXME
 SESSION_URL = "https://fanyi.qq.com/"
 TRANSLATE_URL =
   "https://fanyi.qq.com/api/translate"

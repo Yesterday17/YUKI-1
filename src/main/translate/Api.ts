@@ -1,7 +1,13 @@
-const request = require('request')
-import { Options } from 'request'
 const debug = require('debug')('yuki:api')
+import fetch from 'node-fetch'
 import * as vm from 'vm'
+
+interface Options {
+  url: string
+  method: string
+  headers: { [key: string]: string }
+  body?: URLSearchParams | string
+}
 
 export default class Api implements yuki.Translator {
   private config: yuki.Config.OnlineApiItem
@@ -11,7 +17,7 @@ export default class Api implements yuki.Translator {
     result: ''
   })
 
-  constructor (config: yuki.Config.OnlineApiItem) {
+  constructor(config: yuki.Config.OnlineApiItem) {
     this.config = config
     if (
       !this.config.url ||
@@ -36,33 +42,25 @@ export default class Api implements yuki.Translator {
     }
   }
 
-  private translateApi (text: string, callback: (translation: string) => void) {
+  public async translate(text: string): Promise<string> {
     this.generateRequestBody(text)
-    this.getResponseBody((body) => {
-      const result = this.parseResponse(body)
-      callback(result)
-    })
+    const body = await this.getResponseBody()
+    return this.parseResponse(body)
   }
 
-  public translate (text: string): Promise<string> {
-    return new Promise(resolve => {
-      this.translateApi(text, tr => resolve(tr));
-    })
-  }
-
-  public isEnable () {
+  public isEnable() {
     return this.config.enable
   }
 
-  public setEnable (isEnable: boolean) {
+  public setEnable(isEnable: boolean) {
     this.config.enable = isEnable
   }
 
-  public getName () {
+  public getName() {
     return this.config.name
   }
 
-  private generateRequestBody (text: string) {
+  private generateRequestBody(text: string) {
     if (!this.config.requestBodyFormat || !this.config.responseBodyPattern) {
       return
     }
@@ -74,9 +72,15 @@ export default class Api implements yuki.Translator {
       this.requestOptions.headers = JSON.parse(this.config.requestHeaders)
     }
     if (this.config.requestBodyFormat.startsWith('X')) {
-      this.requestOptions.form = JSON.parse(requestBodyString.substring(1))
+      const params = new URLSearchParams()
+      const b = JSON.parse(requestBodyString.substring(1))
+      for (const key in b) {
+        params.append(key, b[key])
+      }
+      this.requestOptions.body = params
     } else if (this.config.requestBodyFormat.startsWith('J')) {
-      this.requestOptions.json = JSON.parse(requestBodyString.substring(1))
+      this.requestOptions.headers['content-type'] = 'application/json'
+      this.requestOptions.body = requestBodyString.substring(1)
     } else {
       debug(
         '[%s] no such request body type: %s',
@@ -86,15 +90,13 @@ export default class Api implements yuki.Translator {
     }
   }
 
-  private getResponseBody (callback: (body: any) => void) {
-    request(this.requestOptions, (error: Error, response: any, body: any) => {
-      if (error) debug('[%s error] %s', this.config.name, error)
-
-      callback(body)
-    })
+  private async getResponseBody(): Promise<string> {
+    return fetch(this.requestOptions.url, this.requestOptions)
+      .then(resp => resp.text())
+      .catch(error => debug('[%s error] %s', this.config.name, error))
   }
 
-  private parseResponse (body: string): string {
+  private parseResponse(body: string): string {
     if (!this.config.responseBodyPattern) return ''
 
     if (this.config.responseBodyPattern.startsWith('J')) {
@@ -113,7 +115,7 @@ export default class Api implements yuki.Translator {
     }
   }
 
-  private parseResponseByJsObject (body: string | object): string {
+  private parseResponseByJsObject(body: string | object): string {
     if (!this.config.responseBodyPattern) return ''
 
     debug('[%s] get raw response: %o', this.config.name, body)
@@ -130,7 +132,7 @@ export default class Api implements yuki.Translator {
     return this.responseVmContext.result
   }
 
-  private parseResponseByRegExp (body: string): string {
+  private parseResponseByRegExp(body: string): string {
     if (!this.config.responseBodyPattern) return ''
 
     const pattern = new RegExp(this.config.responseBodyPattern.substring(1))
@@ -142,7 +144,7 @@ export default class Api implements yuki.Translator {
     }
   }
 
-  private fixEscapeCharacters (body: string): string {
+  private fixEscapeCharacters(body: string): string {
     return body
       .replace(/&quot;/g, '"')
       .replace(/&#34;/g, '"')

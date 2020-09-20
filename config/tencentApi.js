@@ -1,3 +1,4 @@
+// FIXME
 var from = 'auto';
 var to = 'zh';
 var SecretId = '123465'; //https://console.cloud.tencent.com/cam/capi 腾讯云控制台获取

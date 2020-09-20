@@ -33,31 +33,33 @@ function jwtCheck() {
 }
 
 function renewJWT() {
-  return Request.post(JWT_GENERATE_URL, {
+  return fetch(JWT_GENERATE_URL, {
+    method: 'POST',
     headers: {
       Origin: ORIGIN_URL,
       Referer: ORIGIN_URL,
       "User-Agent": USER_AGENT,
       "X-Authorization": AUTH_TOKEN,
+      "Content-Type": "application/json"
     },
-    body: {
+    body: JSON.stringify({
       browser_id: browserId,
-    },
-    json: true,
-  }).then((j) => j.jwt);
+    }),
+  }).then(data => data.json()).then((j) => j.jwt);
 }
 
-function translate() {
-  return Request.post(TRANSLATE_URL, {
-    gzip: true,
+async function translate() {
+  const data = await fetch(TRANSLATE_URL, {
+    method: 'POST',
     headers: {
       Origin: ORIGIN_URL,
       Referer: ORIGIN_URL,
       "T-Authorization": jwt,
       "X-Authorization": AUTH_TOKEN,
       "User-Agent": USER_AGENT,
+      "Content-Type": "application/json"
     },
-    body: {
+    body: JSON.stringify({
       source: text,
       trans_type: "ja2zh",
       request_id: "web_fanyi",
@@ -67,16 +69,15 @@ function translate() {
       cached: false,
       replaced: true,
       browser_id: browserId,
-    },
-    json: true,
-  }).then((json) => {
-    if (json.target) {
-      callback(decrypt(json.target));
-    } else {
-      browserId = randomBrowserId();
-      jwt = undefined
-    }
+    }),
   });
+  const json = await data.json();
+  if (json.target) {
+    callback(decrypt(json.target));
+  } else {
+    browserId = randomBrowserId();
+    jwt = undefined;
+  }
 }
 
 ////////////////////////////////////////////////////////

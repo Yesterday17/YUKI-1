@@ -4,14 +4,56 @@ USER_AGENT =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36";
 
 var getSign;
-var session;
 var requestTranslation;
 var initSession;
 var token;
 var window;
+var jar;
+
+var CookieJar = (function () {
+  class CookieJar {
+    constructor() {
+      this.cookies = new Map();
+    }
+
+    parse(res) {
+      const raw = res.headers.raw()['set-cookie'];
+      if (raw) {
+        raw.forEach(kv => {
+          const result = kv.split(';')[0].split('=');
+          const key = result.shift();
+          this.cookies.set(key, result.join('='));
+        })
+      }
+      return res;
+    }
+
+    get cookie() {
+      const result = Array.from(this.cookies.entries()).map(([key, value]) => `${key}=${value}`).join(';');
+      return result;
+    }
+  }
+  return CookieJar;
+})()
+
+var toForm = function (obj) {
+  const form = new FormData();
+  for (const key in obj) {
+    form.append(key, obj[key]);
+  }
+  return form;
+}
+
+var toParams = function (obj) {
+  const params = new URLSearchParams();
+  for (const key in obj) {
+    params.append(key, obj[key]);
+  }
+  return params;
+}
 
 if (!getSign) {
-  getSign = (function(r, o, t) {
+  getSign = (function (r, o, t) {
     "use strict";
     function a(r) {
       if (Array.isArray(r)) {
@@ -42,9 +84,9 @@ if (!getSign) {
       } else {
         for (
           var e = r.split(/[\uD800-\uDBFF][\uDC00-\uDFFF]/),
-            C = 0,
-            h = e.length,
-            f = [];
+          C = 0,
+          h = e.length,
+          f = [];
           h > C;
           C++
         )
@@ -66,11 +108,11 @@ if (!getSign) {
       u = null !== i ? i : (i = window[l] || "") || "";
       for (
         var d = u.split("."),
-          m = Number(d[0]) || 0,
-          s = Number(d[1]) || 0,
-          S = [],
-          c = 0,
-          v = 0;
+        m = Number(d[0]) || 0,
+        s = Number(d[1]) || 0,
+        S = [],
+        c = 0,
+        v = 0;
         v < r.length;
         v++
       ) {
@@ -78,43 +120,43 @@ if (!getSign) {
         128 > A
           ? (S[c++] = A)
           : (2048 > A
-              ? (S[c++] = (A >> 6) | 192)
-              : (55296 === (64512 & A) &&
-                v + 1 < r.length &&
-                56320 === (64512 & r.charCodeAt(v + 1))
-                  ? ((A =
-                      65536 + ((1023 & A) << 10) + (1023 & r.charCodeAt(++v))),
-                    (S[c++] = (A >> 18) | 240),
-                    (S[c++] = ((A >> 12) & 63) | 128))
-                  : (S[c++] = (A >> 12) | 224),
-                (S[c++] = ((A >> 6) & 63) | 128)),
+            ? (S[c++] = (A >> 6) | 192)
+            : (55296 === (64512 & A) &&
+              v + 1 < r.length &&
+              56320 === (64512 & r.charCodeAt(v + 1))
+              ? ((A =
+                65536 + ((1023 & A) << 10) + (1023 & r.charCodeAt(++v))),
+                (S[c++] = (A >> 18) | 240),
+                (S[c++] = ((A >> 12) & 63) | 128))
+              : (S[c++] = (A >> 12) | 224),
+              (S[c++] = ((A >> 6) & 63) | 128)),
             (S[c++] = (63 & A) | 128));
       }
       for (
         var p = m,
-          F =
-            "" +
+        F =
+          "" +
+          String.fromCharCode(43) +
+          String.fromCharCode(45) +
+          String.fromCharCode(97) +
+          ("" +
+            String.fromCharCode(94) +
+            String.fromCharCode(43) +
+            String.fromCharCode(54)),
+        D =
+          "" +
+          String.fromCharCode(43) +
+          String.fromCharCode(45) +
+          String.fromCharCode(51) +
+          ("" +
+            String.fromCharCode(94) +
+            String.fromCharCode(43) +
+            String.fromCharCode(98)) +
+          ("" +
             String.fromCharCode(43) +
             String.fromCharCode(45) +
-            String.fromCharCode(97) +
-            ("" +
-              String.fromCharCode(94) +
-              String.fromCharCode(43) +
-              String.fromCharCode(54)),
-          D =
-            "" +
-            String.fromCharCode(43) +
-            String.fromCharCode(45) +
-            String.fromCharCode(51) +
-            ("" +
-              String.fromCharCode(94) +
-              String.fromCharCode(43) +
-              String.fromCharCode(98)) +
-            ("" +
-              String.fromCharCode(43) +
-              String.fromCharCode(45) +
-              String.fromCharCode(102)),
-          b = 0;
+            String.fromCharCode(102)),
+        b = 0;
         b < S.length;
         b++
       )
@@ -132,78 +174,68 @@ if (!getSign) {
   })();
 }
 
-if (!session) {
+if (!jar) {
   window = {};
   window.gtk = "320305.131321201";
-  session = Request.jar();
+  jar = new CookieJar();
 
-  requestTranslation = () => {
-    return new Promise((resolve, reject) => {
-      Request.post(TRANSLATE_URL, {
-        gzip: true,
-        headers: {
-          Referer: SESSION_URL,
-          "User-Agent": USER_AGENT
-        },
-        form: {
-          from: "jp",
-          to: "zh",
-          query: text,
-          transtype: "translang",
-          simple_means_flag: 3,
-          sign: getSign(text),
-          token
-        },
-        jar: session
-      })
-        .then(body => {
-          var sentences = JSON.parse(body);
-          if (sentences.trans_result) {
-            sentences = sentences.trans_result.data;
-            let result = "";
-            for (let i in sentences) {
-              result += sentences[i].dst;
-            }
-            callback(result);
-          } else {
-            callback(
-              `Error. Raw result: ${JSON.stringify(sentences)} Sign: ${getSign(
-                text
-              )} Token: ${token}`
-            );
-          }
-        })
-        .catch(err => {
-          callback(err);
-        });
-    });
+  requestTranslation = async () => {
+    const data = await fetch(TRANSLATE_URL, {
+      method: 'POST',
+      headers: {
+        Cookie: jar.cookie,
+        Referer: SESSION_URL,
+        "User-Agent": USER_AGENT,
+        'accept-encoding': 'gzip, deflate, br'
+      },
+      body: toParams({
+        from: "jp",
+        to: "zh",
+        query: text,
+        transtype: "translang",
+        simple_means_flag: 3,
+        sign: getSign(text),
+        token
+      }),
+    }).then(data => jar.parse(data));
+    const sentences = await data.json();
+    if (sentences.trans_result) {
+      const result = sentences.trans_result.data.map(s => s.dst).join('');
+      callback(result);
+    } else {
+      callback(
+        `Error. Raw result: ${JSON.stringify(sentences)} Sign: ${getSign(
+          text
+        )} Token: ${token}`
+      );
+    }
   };
 
   initSession = () => {
-    return Request.get(SESSION_URL, {
-      jar: session,
-      gzip: true,
+    return fetch(SESSION_URL, {
       headers: {
         Referer: SESSION_URL,
         "User-Agent": USER_AGENT
       }
-    }).then(body => {
-      Request.get(SESSION_URL, {
-        jar: session,
-        gzip: true,
-        headers: {
-          Referer: SESSION_URL,
-          "User-Agent": USER_AGENT
-        }
-      })
-        .then(body => {
-          token = /token: '([^\']+)',/.exec(body)[1];
+    }).then(data => jar.parse(data))
+      .then(() => {
+        fetch(SESSION_URL, {
+          headers: {
+            Cookie: jar.cookie,
+            Referer: SESSION_URL,
+            "User-Agent": USER_AGENT
+          }
         })
-        .then(requestTranslation)
-        .catch(err => {
-          callback(err);
-        });
-    });
+          .then(data => jar.parse(data))
+          .then(data => data.text())
+          .then(body => {
+            token = /token: '([^\']+)',/.exec(body)[1];
+          })
+          .then(requestTranslation)
+          .catch(err => {
+            callback(err);
+          });
+      });
   };
 
   initSession();
