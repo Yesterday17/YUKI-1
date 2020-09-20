@@ -40,10 +40,10 @@ if (!session) {
           }
           result = result.replace(/({[^}]*})|(\(\([^\)]*\)\))/g, '')
           if (result === '') initSession()
-          else callback(result)
+          else resolve(result)
         })
         .catch(err => {
-          callback(qtv, qtk)
+          reject(qtv, qtk)
         });
     });
   };

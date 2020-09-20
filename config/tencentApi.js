@@ -65,26 +65,23 @@ var requestTranslation = () => {
     }
     params = formatRequestData('TextTranslate', params);
 
-    return new Promise(
-        (resolve, reject) => {
-            Request.post(`https://${client.endpoint}${client.path}`, {
-                headers: params.headers,
-                body: params.body,
-                json: true,
-            }).then(json => {
-                if (!json.Response) {
-                    callback(`Error: UNKNOWN ERROR`);
-                } if (json.Response.Error) {
-                    var result = json.Response.Error.Message;
-                    callback(result);
-                } else {
-                    callback(json.Response.TargetText)
-                }
-            }).catch(err => {
-                callback(`error: ${err}`);
-            })
+    return Request.post(`https://${client.endpoint}${client.path}`, {
+        headers: params.headers,
+        body: params.body,
+        json: true,
+    }).then(json => {
+        if (!json.Response) {
+            reject(`Error: UNKNOWN ERROR`);
+        } if (json.Response.Error) {
+            var result = json.Response.Error.Message;
+            reject(result);
+        } else {
+            resolve(json.Response.TargetText)
         }
-    )
+    }).catch(err => {
+        reject(`error: ${err}`);
+    })
+
 }
 
 requestTranslation()

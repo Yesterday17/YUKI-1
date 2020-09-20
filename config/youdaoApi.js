@@ -52,7 +52,7 @@ if (!session) {
           for (let i in sentences) {
             result += sentences[i].tgt;
           }
-          callback(result);
+          resolve(result);
         })
         .catch(err => {
           return initSession();

@@ -38,14 +38,14 @@ requestTranslation = () => {
                 for (let i in sentences) {
                     result += sentences[i].dst;
                 }
-                callback(result);
+                resolve(result);
             } else {
-                callback(
+                reject(
                     `Error. Raw result: ${body}`
                 );
             }
         }).catch(err => {
-            callback(err);
+            reject(err);
         });
 };
 requestTranslation();

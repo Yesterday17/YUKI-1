@@ -17,7 +17,7 @@ if (!browserId) {
 
 jwtCheck()
   .then(() => translate())
-  .catch((e) => callback(`error: ${e}`));
+  .catch((e) => reject(`error: ${e}`));
 
 ////////////////////////////////////////////////////////
 
@@ -73,7 +73,7 @@ async function translate() {
   });
   const json = await data.json();
   if (json.target) {
-    callback(decrypt(json.target));
+    resolve(decrypt(json.target));
   } else {
     browserId = randomBrowserId();
     jwt = undefined;

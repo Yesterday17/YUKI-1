@@ -201,9 +201,9 @@ if (!jar) {
     const sentences = await data.json();
     if (sentences.trans_result) {
       const result = sentences.trans_result.data.map(s => s.dst).join('');
-      callback(result);
+      resolve(result);
     } else {
-      callback(
+      reject(
         `Error. Raw result: ${JSON.stringify(sentences)} Sign: ${getSign(
           text
         )} Token: ${token}`
@@ -233,7 +233,7 @@ if (!jar) {
           })
           .then(requestTranslation)
           .catch(err => {
-            callback(err);
+            reject(err);
           });
       });
   };

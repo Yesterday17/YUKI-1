@@ -26,21 +26,19 @@ export default class ExternalApi implements yuki.Translator {
     this.registerWatchCallback()
   }
 
-  private translateApi(text: string, callback: (translation: string) => void) {
-    this.responseVmContext.text = text
-    this.responseVmContext.callback = callback
-    try {
-      vm.runInContext(this.scriptString, this.responseVmContext, {
-        displayErrors: true
-      })
-    } catch (e) {
-      debug('[%s] runtime error !> %s', this.config.name, e.stack)
-    }
-  }
-
   public translate(text: string): Promise<string> {
-    return new Promise(resolve => {
-      this.translateApi(text, tr => resolve(tr));
+    return new Promise((resolve, reject) => {
+      this.responseVmContext.text = text
+      this.responseVmContext.resolve = resolve
+      this.responseVmContext.reject = reject
+      try {
+        vm.runInContext(this.scriptString, this.responseVmContext, {
+          displayErrors: true
+        })
+      } catch (e) {
+        debug('[%s] runtime error !> %s', this.config.name, e.stack)
+        reject(e)
+      }
     })
   }
 
@@ -84,7 +82,8 @@ export default class ExternalApi implements yuki.Translator {
           createHash: crypto.createHash,
           createHmac: crypto.createHmac
         },
-        callback: undefined
+        resolve: undefined,
+        reject: undefined
       })
     } catch (e) {
       debug(e)

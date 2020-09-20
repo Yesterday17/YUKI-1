@@ -54,6 +54,11 @@ export default class TranslationManager {
           callback({
             [this.apis[key].getName()]: translation
           })
+        }).catch(e => {
+          debug('[Error][%s] -> %s', this.apis[key].getName(), e)
+          callback({
+            [this.apis[key].getName()]: '[Error]'
+          })
         })
       }
     })

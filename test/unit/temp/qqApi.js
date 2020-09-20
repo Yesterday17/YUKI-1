@@ -15,36 +15,34 @@ if (!session) {
   session = Request.jar()
 
   requestTranslation = () => {
-    return new Promise((resolve, reject) => {
-      Request.post(TRANSLATE_URL, {
-        jar: session,
-        gzip: true,
-        headers: {
-          Referer: SESSION_URL,
-          "User-Agent": USER_AGENT
-        },
-        form: {
-          source: "jp",
-          target: "zh",
-          sourceText: text,
-          qtv: qtv,
-          qtk: qtk
+    return Request.post(TRANSLATE_URL, {
+      jar: session,
+      gzip: true,
+      headers: {
+        Referer: SESSION_URL,
+        "User-Agent": USER_AGENT
+      },
+      form: {
+        source: "jp",
+        target: "zh",
+        sourceText: text,
+        qtv: qtv,
+        qtk: qtk
+      }
+    })
+      .then(body => {
+        let sentences = JSON.parse(body).translate.records
+        let result = "";
+        for (let i in sentences) {
+          result += sentences[i].targetText
         }
+        result = result.replace(/({[^}]*})|(\(\([^\)]*\)\))/g, '')
+        if (result === '') initSession()
+        else resolve(result)
       })
-        .then(body => {
-          let sentences = JSON.parse(body).translate.records
-          let result = "";
-          for (let i in sentences) {
-            result += sentences[i].targetText
-          }
-          result = result.replace(/({[^}]*})|(\(\([^\)]*\)\))/g, '')
-          if (result === '') initSession()
-          else callback(result)
-        })
-        .catch(err => {
-          callback(qtv, qtk)
-        });
-    });
+      .catch(err => {
+        reject(qtv, qtk)
+      });
   };
 
   initSession = () => {
