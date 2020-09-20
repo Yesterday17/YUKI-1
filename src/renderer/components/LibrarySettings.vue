@@ -97,6 +97,7 @@ import { join } from "path";
 import IpcTypes from "../../common/IpcTypes";
 
 import YkDownloadProgress from "@/components/DownloadProgress.vue";
+import { FetchProgress } from "../../main/Downloader";
 
 @Component({
   components: {
@@ -130,7 +131,7 @@ export default class LibrarySettings extends Vue {
     return this.tempLibraries.dictionaries.lingoes.path === "";
   }
 
-  public jbdictDownloadState: RequestProgress.ProgressState | boolean = false;
+  public jbdictDownloadState: FetchProgress | boolean = false;
 
   public remainingDownloadTaskCount = 0;
 
@@ -181,11 +182,7 @@ export default class LibrarySettings extends Vue {
     const _this = this;
     ipcRenderer.on(
       IpcTypes.HAS_DOWNLOAD_PROGRESS,
-      (
-        event: Electron.Event,
-        name: string,
-        state: RequestProgress.ProgressState
-      ) => {
+      (event: Electron.Event, name: string, state: FetchProgress) => {
         switch (name) {
           case "dict.jb":
             this.jbdictDownloadState = state;

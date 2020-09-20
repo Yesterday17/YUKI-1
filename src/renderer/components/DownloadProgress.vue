@@ -2,43 +2,36 @@
   <div class="container">
     <v-progress-linear :value="percent100" color="green" />
     <div>
-      <div class="left">{{ speedKB }} KB/s - {{ remainingTime }} s</div>
+      <div class="left">{{ speedKB }} KB/s</div>
       <div class="right">{{ transferedSizeMB }} MB / {{ totalSizeMB }} MB</div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import {
-  remote
-} from 'electron'
-import Vue from 'vue'
-import {
-  Component,
-  Prop
-} from 'vue-property-decorator'
+import { remote } from "electron";
+import Vue from "vue";
+import { Component, Prop } from "vue-property-decorator";
 
-import YkPageContent from '@/components/PageContent.vue'
-import YkPageHeader from '@/components/PageHeader.vue'
+import YkPageContent from "@/components/PageContent.vue";
+import YkPageHeader from "@/components/PageHeader.vue";
+import { FetchProgress } from "../../main/Downloader";
 
 @Component
 export default class DownloadProgress extends Vue {
-  @Prop() public state!: RequestProgress.ProgressState
+  @Prop() public state!: FetchProgress;
 
-  get percent100 () {
-    return parseFloat((this.state.percent * 100).toFixed(2))
+  get percent100() {
+    return parseFloat((this.state.progress * 100).toFixed(2));
   }
-  get speedKB () {
-    return parseFloat((this.state.speed / 1000).toFixed(2))
+  get speedKB() {
+    return parseFloat((this.state.rate / 1000).toFixed(2));
   }
-  get totalSizeMB () {
-    return parseFloat((this.state.size.total / 1000000).toFixed(2))
+  get totalSizeMB() {
+    return parseFloat((this.state.total / 1000000).toFixed(2));
   }
-  get transferedSizeMB () {
-    return parseFloat((this.state.size.transferred / 1000000).toFixed(2))
-  }
-  get remainingTime () {
-    return parseInt(this.state.time.remaining, 10)
+  get transferedSizeMB() {
+    return parseFloat((this.state.done / 1000000).toFixed(2));
   }
 }
 </script>

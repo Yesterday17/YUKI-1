@@ -1,46 +1,61 @@
 import * as fs from 'fs'
-import * as request from 'request'
-const progress = require('request-progress')
+import fetch, { Response } from 'node-fetch'
+const Progress = require('node-fetch-progress')
+
+export interface FetchProgress {
+  total: number
+  done: number
+  totalh: number
+  doneh: number
+  startedAt: number
+  elapsed: number
+  rate: number
+  rateh: number
+  estimated: number
+  progress: number
+  eta: number
+  etah: number
+  etaDate: number
+}
 
 export default class Downloader {
   private endCallback: () => void
   private errorCallback: (err: Error) => void
-  private downloadRequest: request.Request | undefined
-  private progressCallback: (state: RequestProgress.ProgressState) => void | undefined
+  private downloadRequest: Promise<Response> | undefined
+  private progressCallback: (state: FetchProgress) => void | undefined
 
-  constructor (private fileUrl: string, private saveToPath: string) {
+  constructor(private fileUrl: string, private saveToPath: string) {
     this.progressCallback = () => { return }
     this.errorCallback = () => { return }
     this.endCallback = () => { return }
   }
 
-  public start () {
-    this.downloadRequest = request.get(this.fileUrl)
-    progress(this.downloadRequest)
-      .on('progress', (state: RequestProgress.ProgressState) => {
-        this.progressCallback(state)
-      })
-      .on('error', (err: Error) => {
-        this.errorCallback(err)
-      })
-      .on('end', () => {
-        this.endCallback()
-      })
-      .pipe(fs.createWriteStream(this.saveToPath))
+  public start() {
+    this.downloadRequest = fetch(this.fileUrl)
+    const progress = new Progress(this.downloadRequest)
+    progress.on('progress', (p: FetchProgress) => {
+      this.progressCallback(p)
+    })
+    this.downloadRequest.then(r => r.blob()).then(blob => {
+      fs.createWriteStream(this.saveToPath).write(blob)
+      this.endCallback()
+    }).catch(e => {
+      this.errorCallback(e)
+    })
     return this
   }
 
-  public pause () {
+  public pause() {
     if (!this.downloadRequest) return
-    this.downloadRequest.pause()
+    // TODO
   }
-  public resume () {
+  public resume() {
     if (!this.downloadRequest) return
-    this.downloadRequest.resume()
+    // TODO
   }
-  public abort () {
+  public abort() {
     if (!this.downloadRequest) return
-    this.downloadRequest.abort()
+    // TODO
 
     if (fs.existsSync(this.saveToPath)) {
       fs.unlinkSync(this.saveToPath)
@@ -49,15 +64,15 @@ export default class Downloader {
     this.errorCallback(new Error('download aborted'))
   }
 
-  public onProgress (callback: (state: RequestProgress.ProgressState) => void) {
+  public onProgress(callback: (state: FetchProgress) => void) {
     this.progressCallback = callback
     return this
   }
-  public onEnd (callback: () => void) {
+  public onEnd(callback: () => void) {
     this.endCallback = callback
     return this
   }
-  public onError (callback: (err: Error) => void) {
+  public onError(callback: (err: Error) => void) {
     this.errorCallback = callback
     return this
   }

@@ -11,7 +11,7 @@ export default class DownloaderFactory {
   public static LIBRARY_BASE_REPO = ''
   public static LIBRARY_BASE_STORE_PATH = ''
 
-  public static init () {
+  public static init() {
     this.LIBRARY_BASE_REPO = ConfigManager.getInstance()
       .get<yuki.Config.Default>('default').librariesRepoUrl
     this.LIBRARY_BASE_STORE_PATH = path.resolve(global.__baseDir, 'lib')
@@ -19,10 +19,10 @@ export default class DownloaderFactory {
     debug('yuki:downloader:factory')('library base store path -> %s', this.LIBRARY_BASE_STORE_PATH)
   }
 
-  public static makeLibraryDownloader (packName: string): Downloader {
+  public static makeLibraryDownloader(packName: string): Downloader {
     return new Downloader(
       `${this.LIBRARY_BASE_REPO}${packName}.zip`,
-      `${this.LIBRARY_BASE_STORE_PATH}\\${packName}.zip`
+      path.join(this.LIBRARY_BASE_STORE_PATH, `${packName}.zip`)
     ).onProgress((state) => {
       debug('yuki:downloader:library')('[%s] downloading -> %O', packName, state)
       ipcMain.emit(IpcTypes.HAS_DOWNLOAD_PROGRESS, packName, state)
