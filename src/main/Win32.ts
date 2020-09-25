@@ -1,7 +1,5 @@
 const debug = require('debug')('yuki:win32')
-import { EventEmitter } from 'events'
 import YukiNativeBridge from './setup/YukiNativeBridge'
-
 
 export function registerProcessExitCallback(
   pids: number[],

@@ -13,6 +13,7 @@ import router from './router'
 import store from './store'
 
 import VueI18n from 'vue-i18n'
+
 Vue.use(VueI18n)
 
 if (!process.env.IS_WEB) {
@@ -29,7 +30,7 @@ const callback = (event: Electron.Event, name: string, cfg: any) => {
 ipcRenderer.once(IpcTypes.HAS_CONFIG, callback)
 ipcRenderer.send(IpcTypes.REQUEST_CONFIG, 'default')
 
-function next () {
+function next() {
   const i18n = new VueI18n({
     locale
   })
@@ -51,6 +52,7 @@ function next () {
         remote.getCurrentWindow().show()
       }
       const text = hook.text
+      // @ts-ignore
       delete hook.text
       store.dispatch('Hooks/setHookTextOrPatterns', { hook, text })
     }

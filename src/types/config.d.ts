@@ -1,6 +1,8 @@
 declare namespace yuki {
   namespace Config {
-    export interface Config { }
+    // tslint:disable-next-line:no-empty-interface
+    export interface Config {
+    }
 
     export interface LocaleChangerItems {
       [id: string]: LocaleChangerItem
@@ -99,6 +101,7 @@ declare namespace yuki {
       }
     }
 
-    export interface Games extends Array<Game>, Config { }
+    export interface Games extends Array<Game>, Config {
+    }
   }
 }

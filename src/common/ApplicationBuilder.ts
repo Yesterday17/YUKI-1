@@ -16,7 +16,7 @@ export default class ApplicationBuilder<T> {
       context = await this.middlewares[index].process(context)
       return this.iterator(context, index + 1)
     } catch {
-      return Promise.resolve(context);
+      return Promise.resolve(context)
     }
   }
 }

@@ -4,6 +4,7 @@ import * as path from 'path'
 import IpcTypes from '../common/IpcTypes'
 import ConfigManager from './config/ConfigManager'
 import Downloader from './Downloader'
+
 const extract = require('extract-zip')
 const debug = require('debug')
 

@@ -3,6 +3,7 @@ import * as fs from 'fs'
 import { safeDump, safeLoad } from 'js-yaml'
 import * as path from 'path'
 import IpcTypes from '../../common/IpcTypes'
+
 const debug = require('debug')('yuki:config')
 
 abstract class Config {
@@ -36,7 +37,7 @@ abstract class Config {
       } else {
         this.filePathOld = ''
       }
-      fileContent = safeLoad(fs.readFileSync(filePath, { encoding: 'utf-8' }), { json: true }) as Object
+      fileContent = safeLoad(fs.readFileSync(filePath, { encoding: 'utf-8' }), { json: true }) as object
     } catch (e) {
       debug('%s loads failed !> %s', this.filePath, e)
       fileContent = {}
@@ -49,13 +50,12 @@ abstract class Config {
 
   public save() {
     try {
-      Config.FILE_OPTIONS;
       fs.writeFileSync(
         this.filePath,
         safeDump(
           this.config,
           { indent: Config.FILE_OPTIONS.spaces }
-        ).replace("\n", Config.FILE_OPTIONS.EOL)
+        ).replace('\n', Config.FILE_OPTIONS.EOL)
       )
       debug('%s saved', this.filePath)
     } catch (e) {

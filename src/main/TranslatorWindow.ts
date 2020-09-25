@@ -1,12 +1,18 @@
 import { BrowserWindow } from 'electron'
 import BaseGame from './BaseGame'
 import ConfigManager from './config/ConfigManager'
-import Game from './Game'
 import Hooker from './Hooker'
+
 const debug = require('debug')('yuki:translatorWindow')
 // const ElectronVibrancy = require('electron-vibrancy')
 
 export default class TranslatorWindow {
+  public static getInstance(): TranslatorWindow {
+    return this.instance
+  }
+
+  private static instance: TranslatorWindow
+
   private readonly URL =
     process.env.NODE_ENV === 'development'
       ? `http://localhost:9081/translator.html`
@@ -18,14 +24,9 @@ export default class TranslatorWindow {
   private isRealClose = false
   private config!: yuki.Config.Gui['translatorWindow']
 
-  private static instance: TranslatorWindow;
-  public static getInstance(): TranslatorWindow {
-    return this.instance;
-  }
-
   constructor() {
     this.create()
-    TranslatorWindow.instance = this;
+    TranslatorWindow.instance = this
   }
 
   public getWindow() {

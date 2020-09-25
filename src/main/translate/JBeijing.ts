@@ -1,6 +1,7 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import YukiNativeBridge from '../setup/YukiNativeBridge'
+
 const debug = require('debug')('yuki:jbeijing')
 
 export default class JBeijing {
@@ -34,7 +35,7 @@ export default class JBeijing {
 
   public translate(text: string, destCodePage: number, callback: (translation: string) => void) {
     YukiNativeBridge.instance.fetchJBeijing7Translation(text).then((translated) => {
-      callback(translated);
+      callback(translated)
     })
   }
 

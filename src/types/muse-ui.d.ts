@@ -8,15 +8,19 @@ type BeforeCloseFunction = (
   modal: any,
   close: () => void
 ) => any
+
 interface ValidatorResult {
   valid: boolean
   message: string
 }
+
 interface MessageReturn {
   result: boolean
   value?: string | number
 }
+
 type Validator = (value: string | number) => ValidatorResult
+
 export interface MessageOptions {
   successIcon?: string
   infoIcon?: string
@@ -43,21 +47,27 @@ export interface MessageOptions {
 
 declare module 'vue/types/vue' {
   export interface Vue {
-    $message (options: MessageOptions): Promise<MessageReturn>
-    $alert (content: string, options: MessageOptions): Promise<MessageReturn>
-    $alert (
+    $message(options: MessageOptions): Promise<MessageReturn>
+
+    $alert(content: string, options: MessageOptions): Promise<MessageReturn>
+
+    $alert(
       content: string,
       title: string,
       options: MessageOptions
     ): Promise<MessageReturn>
-    $confirm (content: string, options: MessageOptions): Promise<MessageReturn>
-    $confirm (
+
+    $confirm(content: string, options: MessageOptions): Promise<MessageReturn>
+
+    $confirm(
       content: string,
       title: string,
       options: MessageOptions
     ): Promise<MessageReturn>
-    $prompt (content: string, options: MessageOptions): Promise<MessageReturn>
-    $prompt (
+
+    $prompt(content: string, options: MessageOptions): Promise<MessageReturn>
+
+    $prompt(
       content: string,
       title: string,
       options: MessageOptions
@@ -72,10 +82,12 @@ export type ToastPosition =
   | 'bottom'
   | 'bottom-start'
   | 'bottom-end'
+
 export interface ToastAction {
   action: string | VNode
   click: (id: string) => any
 }
+
 export interface ToastOptions {
   message?: string
   time?: number
@@ -94,17 +106,20 @@ export interface ToastOptions {
 
 export interface Toast {
   install: PluginFunction<ToastOptions>
-  config (options: ToastOptions): ToastOptions
-  message (options: ToastOptions): string
-  success (message: string): string
-  success (options: ToastOptions): string
-  info (message: string): string
-  info (options: ToastOptions): string
-  warning (message: string): string
-  warning (options: ToastOptions): string
-  error (message: string): string
-  error (options: ToastOptions): string
-  close (id: string): void
+
+  config(options: ToastOptions): ToastOptions
+
+  message(options: ToastOptions): string
+
+  success(message: string | ToastOptions): string
+
+  info(message: string | ToastOptions): string
+
+  warning(message: string | ToastOptions): string
+
+  error(message: string | ToastOptions): string
+
+  close(id: string): void
 }
 
 export default Toast

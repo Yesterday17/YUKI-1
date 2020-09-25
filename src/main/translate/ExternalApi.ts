@@ -4,6 +4,7 @@ import * as path from 'path'
 import * as vm from 'vm'
 import fetch from 'node-fetch'
 import FormData from 'formdata-node'
+
 const debug = require('debug')('yuki:api')
 
 export default class ExternalApi implements yuki.Translator {

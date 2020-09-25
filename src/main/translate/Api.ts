@@ -92,8 +92,8 @@ export default class Api implements yuki.Translator {
 
   private async getResponseBody(): Promise<string> {
     return fetch(this.requestOptions.url, this.requestOptions)
-      .then(resp => resp.text())
-      .catch(error => debug('[%s error] %s', this.config.name, error))
+      .then((resp) => resp.text())
+      .catch((error) => debug('[%s error] %s', this.config.name, error))
   }
 
   private parseResponse(body: string): string {

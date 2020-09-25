@@ -4,6 +4,7 @@ export default class DefaultConfig extends Config {
   public getFilename(): string {
     return 'config'
   }
+
   protected getDefaultObject(): yuki.Config.Default {
     return {
       localeChangers: {

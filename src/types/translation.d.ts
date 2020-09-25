@@ -7,9 +7,12 @@ declare namespace yuki {
   }
 
   export interface Translator {
-    translate (text: string): Promise<string>
-    isEnable (): boolean
-    setEnable (isEnable: boolean): void
-    getName (): string
+    translate(text: string): Promise<string>
+
+    isEnable(): boolean
+
+    setEnable(isEnable: boolean): void
+
+    getName(): string
   }
 }

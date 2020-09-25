@@ -1,10 +1,11 @@
 import * as sqlite3 from 'sqlite3'
 import * as xml2js from 'xml2js'
+
 const debug = require('debug')('yuki:dict:lingoes')
 
 export default class LingoesDict {
 
-  public static contentToObject (
+  public static contentToObject(
     content: string,
     callback: (pattern?: yuki.LingoesPattern) => void
   ) {
@@ -117,7 +118,7 @@ export default class LingoesDict {
   private config: yuki.Config.LibraryItem
   private db: sqlite3.Database | undefined
 
-  constructor (config: yuki.Config.LibraryItem) {
+  constructor(config: yuki.Config.LibraryItem) {
     this.config = config
     if (this.config.enable) {
       this.db = new sqlite3.Database(this.config.path)
@@ -125,7 +126,7 @@ export default class LingoesDict {
     }
   }
 
-  public find (word: string, callback: (result: yuki.DictResult) => void) {
+  public find(word: string, callback: (result: yuki.DictResult) => void) {
     if (!this.db) return
 
     this.db.all('SELECT content from entry where word = ?', word, (err, rows) => {
@@ -150,7 +151,7 @@ export default class LingoesDict {
     })
   }
 
-  public close () {
+  public close() {
     if (this.db) this.db.close()
   }
 }

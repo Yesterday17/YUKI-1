@@ -1,4 +1,5 @@
 import { exec } from 'child_process'
+
 const debug = require('debug')('yuki:game')
 import BaseGame from './BaseGame'
 import ConfigManager from './config/ConfigManager'
@@ -14,7 +15,7 @@ export default class Game extends BaseGame {
   private textPreprocessor: string
   private exeName: string
 
-  constructor (game: yuki.Game) {
+  constructor(game: yuki.Game) {
     super()
     this.path = game.path
     this.execString = ''
@@ -26,12 +27,12 @@ export default class Game extends BaseGame {
     this.exeName = ''
   }
 
-  public start () {
+  public start() {
     this.execGameProcess()
     this.registerHookerWithPid()
   }
 
-  public getInfo (): yuki.Game {
+  public getInfo(): yuki.Game {
     return {
       name: this.name,
       code: this.code,
@@ -41,14 +42,14 @@ export default class Game extends BaseGame {
     }
   }
 
-  private execGameProcess () {
+  private execGameProcess() {
     this.getRawExecStringOrDefault()
     this.replaceExecStringTokensWithActualValues()
     debug('exec string: %s', this.execString)
     exec(this.execString)
   }
 
-  private getRawExecStringOrDefault () {
+  private getRawExecStringOrDefault() {
     const localeChangers = ConfigManager.getInstance().get<yuki.Config.Default>(
       'default'
     ).localeChangers
@@ -64,11 +65,11 @@ export default class Game extends BaseGame {
     this.execString = '%GAME_PATH%'
   }
 
-  private replaceExecStringTokensWithActualValues () {
+  private replaceExecStringTokensWithActualValues() {
     this.execString = this.execString.replace('%GAME_PATH%', `"${this.path}"`)
   }
 
-  private async registerHookerWithPid () {
+  private async registerHookerWithPid() {
     this.exeName = this.path.substring(this.path.lastIndexOf('\\') + 1)
     debug('finding pid of %s...', this.exeName)
     try {
@@ -82,7 +83,7 @@ export default class Game extends BaseGame {
     this.afterGetPids()
   }
 
-  private findPids () {
+  private findPids() {
     return new Promise((resolve, reject) => {
       let retryTimes = 0
       const pidGetterInterval = setInterval(() => {
@@ -110,11 +111,11 @@ export default class Game extends BaseGame {
     })
   }
 
-  private findsPidsIn (value: string) {
+  private findsPidsIn(value: string) {
     return value.startsWith('"')
   }
 
-  private parsePidsFrom (value: string) {
+  private parsePidsFrom(value: string) {
     const pids: number[] = []
 
     const regexResult = value.match(/"[^"]+"/g)

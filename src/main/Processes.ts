@@ -1,8 +1,9 @@
 import { exec } from 'child_process'
+
 const debug = require('debug')('yuki:processes')
 
 export default class Processes {
-  public static async get () {
+  public static async get() {
     return new Promise<yuki.Processes>((resolve, reject) => {
       exec(`${Processes.CHCP_COMMAND} & ${Processes.TASK_LIST_COMMAND}`,
         (err, stdout, stderr) => {
@@ -24,14 +25,15 @@ export default class Processes {
       )
     })
   }
+
   private static CHCP_COMMAND = 'chcp 65001'
   private static TASK_LIST_COMMAND = 'tasklist /nh /fo csv /fi "sessionname eq Console"'
 
-  private static findsProcessIn (value: string) {
+  private static findsProcessIn(value: string) {
     return value.indexOf('"') !== -1
   }
 
-  private static parseProcessesFrom (value: string) {
+  private static parseProcessesFrom(value: string) {
     const processes: yuki.Processes = []
 
     const regexResult = value.match(/"([^"]+)"/g)

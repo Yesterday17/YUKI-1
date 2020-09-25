@@ -1,18 +1,21 @@
-import { spawn } from 'child_process';
-import { EventEmitter } from 'events';
-import fetch from 'node-fetch';
-import * as path from 'path';
-import { client as WebSocketClient } from 'websocket';
+import { spawn } from 'child_process'
+import { EventEmitter } from 'events'
+import fetch from 'node-fetch'
+import * as path from 'path'
+import { client as WebSocketClient } from 'websocket'
+
 const debug = require('debug')('yuki:native')
 
 export default class YukiNativeBridge extends EventEmitter {
-  public static readonly instance = new YukiNativeBridge();
+  public static readonly instance = new YukiNativeBridge()
+  public readonly win32 = new EventEmitter()
+
+  public wsRetry: number = 0
 
   private baseUrl: string = ''
-  private ws?: WebSocketClient;
-  public readonly win32 = new EventEmitter();
+  private ws?: WebSocketClient
 
-  initializeYukiNative(config: yuki.Config.Default['native']) {
+  public initializeYukiNative(config: yuki.Config.Default['native']) {
     this.baseUrl = config.listen
 
     if (!config.path) {
@@ -42,15 +45,15 @@ export default class YukiNativeBridge extends EventEmitter {
     })
   }
 
-  async fetchPing(): Promise<boolean> {
+  public async fetchPing(): Promise<boolean> {
     return await this.nativeFetch('/ping') === 'pong'
   }
 
-  async loadLibrary(path: string): Promise<void> {
-    await this.nativeFetch('/library', path)
+  public async loadLibrary(libPath: string): Promise<void> {
+    await this.nativeFetch('/library', libPath)
   }
 
-  async fetchJBeijing7Translation(text: string): Promise<string> {
+  public async fetchJBeijing7Translation(text: string): Promise<string> {
     try {
       return await this.nativeFetch('/jbeijing7', text)
     } catch (e) {
@@ -59,11 +62,11 @@ export default class YukiNativeBridge extends EventEmitter {
     }
   }
 
-  async fetchJBeijing7OpenUserdict(dict: string[]): Promise<void> {
-    await this.nativeFetch("/jbeijing7/dict", dict.join('\n'))
+  public async fetchJBeijing7OpenUserdict(dict: string[]): Promise<void> {
+    await this.nativeFetch('/jbeijing7/dict', dict.join('\n'))
   }
 
-  async fetchMecab(text: string): Promise<string> {
+  public async fetchMecab(text: string): Promise<string> {
     try {
       return await this.nativeFetch('/mecab', text)
     } catch (e) {
@@ -72,37 +75,36 @@ export default class YukiNativeBridge extends EventEmitter {
     }
   }
 
-  async fetchTextractor(pid: number, code: string = '') {
+  public async fetchTextractor(pid: number, code: string = '') {
     await this.nativeFetch('/textractor', `${pid}|${code}`)
   }
 
   ///////////////////////////////////////////////////////////////////
 
-  async fetchWatchProcessExit(pid: number) {
+  public async fetchWatchProcessExit(pid: number) {
     await this.nativeFetch('/win32/exit', `${pid}`)
   }
 
-  async fetchMinimize(pid: number) {
+  public async fetchMinimize(pid: number) {
     await this.nativeFetch('/win32/minimize', `${pid}`)
   }
 
-  async fetchRestore(pid: number) {
+  public async fetchRestore(pid: number) {
     await this.nativeFetch('/win32/restore', `${pid}`)
   }
 
   ///////////////////////////////////////////////////////////////////
 
-  async nativeFetch(path: string, body?: string): Promise<string> {
-    const resp = await fetch('http://' + this.baseUrl + path, { method: 'POST', body: body })
+  public async nativeFetch(fetchPath: string, body?: string): Promise<string> {
+    const resp = await fetch('http://' + this.baseUrl + fetchPath, { method: 'POST', body })
 
     if (resp.status !== 200) {
       throw resp.status
     }
-    return await resp.text()
+    return resp.text()
   }
 
-  wsRetry: number = 0;
-  async initializeWebSocketClient() {
+  public async initializeWebSocketClient() {
     this.ws = new WebSocketClient()
     this.ws.on('connect', (conn) => {
       debug('WebSocket connected')

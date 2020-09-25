@@ -1,6 +1,6 @@
 import IpcTypes from '../common/IpcTypes'
+
 const debug = require('debug')('yuki:hooker')
-import * as path from 'path'
 import ApplicationBuilder from '../common/ApplicationBuilder'
 import ConfigManager from './config/ConfigManager'
 import FilterMiddleware from './middlewares/FilterMiddleware'
@@ -25,6 +25,7 @@ export default class Hooker {
     }
     return this.instance
   }
+
   private static instance: Hooker | undefined
 
   private publisherMap: IPublisherMap = {

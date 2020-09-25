@@ -1,7 +1,6 @@
 const debug = require('debug')('yuki:textInterceptor')
 
-export default class TextInterceptorMiddleware
-  implements yuki.Middleware<yuki.TextOutputObject> {
+export default class TextInterceptorMiddleware implements yuki.Middleware<yuki.TextOutputObject> {
   private static DEFAULT_MAX_LENGTH = 1000
 
   private maxLength: number
@@ -18,8 +17,8 @@ export default class TextInterceptorMiddleware
   }
 
   public async process(context: yuki.TextOutputObject): Promise<yuki.TextOutputObject> {
-    if (this.textShouldBeIgnore(context.text)) throw "ignore"
-    if (this.ignoreAsciiOnly && this.isAsciiOnly(context.text)) throw "ignore"
+    if (this.textShouldBeIgnore(context.text)) throw new Error('ignore')
+    if (this.ignoreAsciiOnly && this.isAsciiOnly(context.text)) throw new Error('ignore')
 
     return context
   }

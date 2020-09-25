@@ -1,4 +1,5 @@
 import { Commit } from 'vuex'
+
 const debug = require('debug')('yuki:translatorWindow')
 import { ipcRenderer, remote } from 'electron'
 import IpcTypes from '../../../common/IpcTypes'
@@ -51,7 +52,7 @@ const getters = {
 }
 
 const mutations = {
-  SET_CONFIG (
+  SET_CONFIG(
     state: yuki.TranslatorConfigState,
     payload: { name: string; cfgs: any }
   ) {
@@ -70,7 +71,7 @@ const mutations = {
         break
     }
   },
-  SET_ORIGINAL_TEXT_SIZE (
+  SET_ORIGINAL_TEXT_SIZE(
     state: yuki.TranslatorConfigState,
     payload: { size: number }
   ) {
@@ -79,7 +80,7 @@ const mutations = {
       fontSize: payload.size
     }
   },
-  SET_TRANSLATION_TEXT_SIZE (
+  SET_TRANSLATION_TEXT_SIZE(
     state: yuki.TranslatorConfigState,
     payload: { size: number }
   ) {
@@ -88,7 +89,7 @@ const mutations = {
       fontSize: payload.size
     }
   },
-  SET_TRANSLATION_TEXT_MARGIN (
+  SET_TRANSLATION_TEXT_MARGIN(
     state: yuki.TranslatorConfigState,
     payload: { margin: number }
   ) {
@@ -97,31 +98,31 @@ const mutations = {
       margin: payload.margin
     }
   },
-  SET_BACKGROUND_COLOR (
+  SET_BACKGROUND_COLOR(
     state: yuki.TranslatorConfigState,
     payload: { color: { hex8: string } }
   ) {
     state.gui.background = payload.color.hex8
   },
-  SET_MECAB_SHOW_ROMAJI (
+  SET_MECAB_SHOW_ROMAJI(
     state: yuki.TranslatorConfigState,
     payload: { value: boolean }
   ) {
     state.gui.mecab.showRomaji = payload.value
   },
-  SET_MECAB_SHOW_ABBR (
+  SET_MECAB_SHOW_ABBR(
     state: yuki.TranslatorConfigState,
     payload: { value: boolean }
   ) {
     state.gui.mecab.showAbbr = payload.value
   },
-  SET_AUTO_HIDE_TITLEBAR (
+  SET_AUTO_HIDE_TITLEBAR(
     state: yuki.TranslatorConfigState,
     payload: { value: boolean }
   ) {
     state.gui.autoHideTitlebar = payload.value
   },
-  SAVE_GUI_CONFIG (state: yuki.TranslatorConfigState) {
+  SAVE_GUI_CONFIG(state: yuki.TranslatorConfigState) {
     if (!isSavingConfig) {
       setTimeout(() => {
         ipcRenderer.send(IpcTypes.REQUEST_SAVE_TRANSLATOR_GUI, {
@@ -137,7 +138,7 @@ const mutations = {
 }
 
 const actions = {
-  setConfig (
+  setConfig(
     { commit }: { commit: Commit },
     { name, cfgs }: { name: string; cfgs: any }
   ) {

@@ -1,5 +1,6 @@
 import { app, dialog, ipcMain } from 'electron'
 import IpcTypes from '../../common/IpcTypes'
+
 const debug = require('debug')('yuki:ipc')
 import { extname } from 'path'
 import { format } from 'util'
@@ -18,7 +19,7 @@ import YukiNativeBridge from './YukiNativeBridge'
 let runningGame: BaseGame
 let translatorWindow: TranslatorWindow | null
 
-export default function (mainWindow: Electron.BrowserWindow) {
+export default function(mainWindow: Electron.BrowserWindow) {
   require('debug').log = (message: any, ...optionalParams: any[]) => {
     // tslint:disable-next-line: no-console
     console.log(message, ...optionalParams)
@@ -49,7 +50,9 @@ export default function (mainWindow: Electron.BrowserWindow) {
         runningGame = new Game(game)
       } else if (process) {
         runningGame = new GameFromProcess(process)
-      } else return
+      } else {
+        return
+      }
       runningGame.on('started', () => {
         mainWindow.hide()
         mainWindow.webContents.send(IpcTypes.HAS_RUNNING_GAME)

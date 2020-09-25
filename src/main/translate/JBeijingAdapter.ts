@@ -13,23 +13,25 @@ export default class JBeijingAdapter implements yuki.Translator {
     }
   }
 
-  private translateJb(text: string, callback: (translation: string) => void) {
-    this.jb.translate(text, this.config.traditionalChinese ? 950 : 936, callback)
-  }
-
   public translate(text: string): Promise<string> {
-    return new Promise(resolve => {
-      this.translateJb(text, tr => resolve(tr));
+    return new Promise((resolve) => {
+      this.translateJb(text, (tr) => resolve(tr))
     })
   }
 
   public isEnable(): boolean {
     return this.config.enable
   }
+
   public setEnable(isEnable: boolean): void {
     this.config.enable = isEnable
   }
+
   public getName(): string {
     return 'JBeijing'
+  }
+
+  private translateJb(text: string, callback: (translation: string) => void) {
+    this.jb.translate(text, this.config.traditionalChinese ? 950 : 936, callback)
   }
 }

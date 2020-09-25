@@ -1,11 +1,11 @@
 import { remote } from 'electron'
 
-let finished: Promise<void> = Promise.resolve();
+let finished: Promise<void> = Promise.resolve()
 
 export function updateWindowHeight(
   component: Vue.default, addBodyHeight: boolean, offset: number, animation = true) {
   let currentHeight = addBodyHeight ? document.body.offsetHeight : 0
-  let newHeight = currentHeight + offset
+  const newHeight = currentHeight + offset
 
   finished.then(() => {
     const window = remote.getCurrentWindow()
@@ -23,22 +23,25 @@ export function updateWindowHeight(
     }
 
     if (animation) {
-      finished = function (): Promise<void> {
+      finished = ((): Promise<void> => {
         currentHeight = remote.getCurrentWindow().getSize()[1]
         offset = newHeight - currentHeight
         let counter = 0
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
           requestAnimationFrame(function update() {
             // 60 frames
             counter++
             currentHeight += offset / 60
             window.setSize(width, Math.floor(currentHeight))
 
-            if (counter < 60 && offset !== 0) requestAnimationFrame(update);
-            else resolve()
+            if (counter < 60 && offset !== 0) {
+              requestAnimationFrame(update)
+            } else {
+              resolve()
+            }
           })
         })
-      }()
+      })()
     } else {
       finished = Promise.resolve()
       window.setSize(width, newHeight)

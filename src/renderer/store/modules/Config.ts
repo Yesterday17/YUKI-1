@@ -8,7 +8,7 @@ const configState: any = {
 }
 
 const mutations = {
-  SET_CONFIG (state: yuki.ConfigState, payload: { name: string; cfgs: any }) {
+  SET_CONFIG(state: yuki.ConfigState, payload: { name: string; cfgs: any }) {
     switch (payload.name) {
       case 'default':
         state.default = payload.cfgs
@@ -27,7 +27,7 @@ const mutations = {
 }
 
 const actions = {
-  setConfig (
+  setConfig(
     { commit }: { commit: Commit },
     { name, cfgs }: { name: string; cfgs: any }
   ) {

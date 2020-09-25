@@ -7,15 +7,17 @@ import DefaultConfig from './DefaultConfig'
 import GamesConfig from './GamesConfig'
 import GuiConfig from './GuiConfig'
 import TextsConfig from './TextsConfig'
+
 const debug = require('debug')('yuki:configManager')
 
 export default class ConfigManager {
-  public static getInstance (): ConfigManager {
+  public static getInstance(): ConfigManager {
     if (!this.instance) {
       this.instance = new ConfigManager()
     }
     return this.instance
   }
+
   private static instance: ConfigManager | undefined
 
   public nameToConfigMap: INameToConfigMap = {
@@ -25,7 +27,7 @@ export default class ConfigManager {
     gui: new GuiConfig().init()
   }
 
-  public get<T extends yuki.Config.Config> (configName: string): T {
+  public get<T extends yuki.Config.Config>(configName: string): T {
     try {
       return this.nameToConfigMap[configName].get()
     } catch (e) {
@@ -34,7 +36,7 @@ export default class ConfigManager {
     }
   }
 
-  public set<T extends yuki.Config.Config> (configName: string, cfg: T): void {
+  public set<T extends yuki.Config.Config>(configName: string, cfg: T): void {
     try {
       return this.nameToConfigMap[configName].set(cfg)
     } catch (e) {
@@ -42,7 +44,7 @@ export default class ConfigManager {
     }
   }
 
-  public save (configName: string): void {
+  public save(configName: string): void {
     try {
       return this.nameToConfigMap[configName].save()
     } catch (e) {
@@ -50,7 +52,7 @@ export default class ConfigManager {
     }
   }
 
-  public getFilename (configName: string): string {
+  public getFilename(configName: string): string {
     try {
       return this.nameToConfigMap[configName].getFilename()
     } catch (e) {

@@ -1,10 +1,11 @@
 import Config from './Config'
 
 export default class TextsConfig extends Config {
-  public getFilename (): string {
+  public getFilename(): string {
     return 'texts'
   }
-  protected getDefaultObject (): yuki.Config.Texts {
+
+  protected getDefaultObject(): yuki.Config.Texts {
     return {
       interceptor: {
         shouldBeIgnore: [
@@ -22,7 +23,7 @@ export default class TextsConfig extends Config {
       modifier: {
         removeAscii: false,
         deduplicate: false,
-        deduplicateCount: 0, 
+        deduplicateCount: 0,
         delineBreak: false
       },
       merger: {

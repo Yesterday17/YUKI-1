@@ -13,3 +13,4 @@ config/*.json
 config/*.yaml
 lib/dict/lingoes
 package-lock.json
+.idea

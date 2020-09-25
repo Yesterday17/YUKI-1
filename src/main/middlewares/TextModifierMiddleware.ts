@@ -24,18 +24,18 @@ export default class TextInterceptorMiddleware
 
     if (this.removeAscii) {
       context.text = context.text.replace(/[\x00-\xFF]+/g, '')
-      if (context.text === '') throw "empty"
+      if (context.text === '') throw new Error('empty')
     }
     if (this.deduplicateRegex) {
       context.text = context.text.replace(this.deduplicateRegex, '$1')
-      if (context.text === '') throw "empty"
+      if (context.text === '') throw new Error('empty')
     }
     if (this.delineBreak) {
       context.text = context.text.replace(/_r/g, '')
       context.text = context.text.replace(/<br>/g, '')
       context.text = context.text.replace(/#n/g, '')
       context.text = context.text.replace(/\s+/g, '')
-      if (context.text === '') throw "empty"
+      if (context.text === '') throw new Error('empty')
     }
 
     return context

@@ -17,7 +17,7 @@ const hooksState: yuki.TranslatorHookState = {
 
 const getters = {
   getTextsByHandle: (state: yuki.TranslatorHookState) =>
-    (handle: number): {[id: number]: string} => {
+    (handle: number): { [id: number]: string } => {
       if (!state.texts[handle.toString()]) return {}
 
       return state.texts[handle.toString()]
@@ -27,7 +27,7 @@ const getters = {
       if (!state.texts[handle.toString()]) return ''
       return state.texts[handle.toString()][
         _getter.getLastIndexByHandle(handle)
-      ]
+        ]
     },
   getLastIndexByHandle: (state: yuki.TranslatorHookState) =>
     (handle: number): number => {
@@ -61,7 +61,7 @@ const getters = {
 }
 
 const mutations = {
-  ADD_HOOK (
+  ADD_HOOK(
     state: yuki.TranslatorHookState,
     payload: { hook: yuki.TextThread }
   ) {
@@ -79,7 +79,7 @@ const mutations = {
       [payload.hook.handle.toString()]: []
     }
   },
-  SET_HOOK_TEXT (
+  SET_HOOK_TEXT(
     state: yuki.TranslatorHookState,
     payload: { hookNum: number; text: string }
   ) {
@@ -92,7 +92,7 @@ const mutations = {
       delete state.translations[handleString][texts.length - MAX_STORE_COUNT - 1]
     }
   },
-  SET_HOOK_PATTERNS (
+  SET_HOOK_PATTERNS(
     state: yuki.TranslatorHookState,
     payload: { hookNum: number; patterns: yuki.MeCabPatterns }
   ) {
@@ -106,19 +106,19 @@ const mutations = {
       delete state.translations[handleString][patterns.length - MAX_STORE_COUNT - 1]
     }
   },
-  CHOOSE_HOOK_AS_DISPLAY (
+  CHOOSE_HOOK_AS_DISPLAY(
     state: yuki.TranslatorHookState,
     payload: { hookNum: number }
   ) {
     state.currentDisplayHookIndex = payload.hookNum
   },
-  INIT_DISPLAY_HOOK (
+  INIT_DISPLAY_HOOK(
     state: yuki.TranslatorHookState,
     payload: { code: string }
   ) {
     state.toDisplayHookCode = payload.code
   },
-  MERGE_TRANSLATION (
+  MERGE_TRANSLATION(
     state: yuki.TranslatorHookState,
     payload: yuki.TranslationMessage
   ) {
@@ -127,12 +127,12 @@ const mutations = {
       [payload.id.toString()]: {
         ...state.translations[state.currentDisplayHookIndex][
           payload.id.toString()
-        ],
+          ],
         ...payload.translation
       }
     }
   },
-  INIT_TRANSLATION_PLACEHOLDERS (
+  INIT_TRANSLATION_PLACEHOLDERS(
     state: yuki.TranslatorHookState,
     payload: yuki.TranslationMessage
   ) {
@@ -144,11 +144,14 @@ const mutations = {
       [payload.id.toString()]: Object.keys(
         state.translations[state.currentDisplayHookIndex][
           (payload.id - 1).toString()
-        ]
-      ).reduce((p, c) => { p[c] = '...'; return p }, {})
+          ]
+      ).reduce((p, c) => {
+        p[c] = '...'
+        return p
+      }, {})
     }
   },
-  SET_MECAB_ENABLE (
+  SET_MECAB_ENABLE(
     state: yuki.TranslatorHookState,
     payload: { enable: boolean }
   ) {
@@ -157,7 +160,7 @@ const mutations = {
 }
 
 const actions = {
-  addHook (
+  addHook(
     { commit, state }: { commit: Commit; state: yuki.TranslatorHookState },
     hook: yuki.TextThread
   ) {
@@ -167,7 +170,7 @@ const actions = {
       commit('INIT_DISPLAY_HOOK', { code: '' })
     }
   },
-  setHookTextOrPatterns (
+  setHookTextOrPatterns(
     {
       dispatch,
       commit,
@@ -216,15 +219,15 @@ const actions = {
       commonActions()
     }
   },
-  mergeTranslation (
+  mergeTranslation(
     { commit }: { commit: Commit },
     payload: yuki.TranslationMessage
   ) {
     commit('MERGE_TRANSLATION', payload)
   },
-  chooseHookAsDisplay (
+  chooseHookAsDisplay(
     { commit }:
-    { commit: Commit },
+      { commit: Commit },
     hookNum: number
   ) {
     commit('CHOOSE_HOOK_AS_DISPLAY', { hookNum })

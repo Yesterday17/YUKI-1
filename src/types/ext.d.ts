@@ -16,5 +16,5 @@ declare namespace RequestProgress {
       // The remaining seconds to finish (3 decimals)
       remaining: string
     }
-  }  
+  }
 }

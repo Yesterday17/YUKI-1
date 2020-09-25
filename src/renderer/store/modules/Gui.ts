@@ -18,19 +18,19 @@ const getters = {
 }
 
 const mutations = {
-  SET_NO_GAME (state: yuki.GuiState, payload: { value: boolean }) {
+  SET_NO_GAME(state: yuki.GuiState, payload: { value: boolean }) {
     state.noGame = payload.value
   },
-  NEW_DEBUG_MESSAGE (state: yuki.GuiState, payload: { value: string }) {
+  NEW_DEBUG_MESSAGE(state: yuki.GuiState, payload: { value: string }) {
     state.debugMessages.push(payload.value)
     if (state.debugMessages.length > MAX_DEBUG_MESSAGES_COLUMNS) {
       state.debugMessages.shift()
     }
   },
-  SET_GAME_STARTING_ENDED (state: yuki.GuiState, payload: { value: boolean }) {
+  SET_GAME_STARTING_ENDED(state: yuki.GuiState, payload: { value: boolean }) {
     state.isGameStartingEnded = payload.value
   },
-  SET_PROCESSES (state: yuki.GuiState, payload: { value: yuki.Processes }) {
+  SET_PROCESSES(state: yuki.GuiState, payload: { value: yuki.Processes }) {
     state.processes = payload.value
   }
 }

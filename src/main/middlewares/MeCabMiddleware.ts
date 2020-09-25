@@ -1,10 +1,9 @@
-import YukiNativeBridge from "../setup/YukiNativeBridge"
+import YukiNativeBridge from '../setup/YukiNativeBridge'
 
 const debug = require('debug')('yuki:mecab')
 const toRomaji = require('wanakana').toRomaji
 
-export default class MecabMiddleware
-  implements yuki.Middleware<yuki.TextOutputObject> {
+export default class MecabMiddleware implements yuki.Middleware<yuki.TextOutputObject> {
 
   public static readonly ABBR_TO_COLOR_MAP = {
     m: '#a7ffeb',

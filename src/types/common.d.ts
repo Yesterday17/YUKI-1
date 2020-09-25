@@ -10,8 +10,8 @@ declare namespace yuki {
   }
 
   export interface Win32Event {
-    event: string;
-    value: number;
+    event: string
+    value: number
   }
 
   export interface Win32ExitEvent {
@@ -35,13 +35,13 @@ declare namespace yuki {
     process: (context: T) => Promise<T>
   }
 
-  export type MeCabPattern = {
-    word: string;
-    abbr: string;
-    kana: string;
+  export interface MeCabPattern {
+    word: string
+    abbr: string
+    kana: string
   }
 
-  export type MeCabPatterns = Array<MeCabPattern>
+  export type MeCabPatterns = MeCabPattern[]
 
   export interface DictResult {
     found?: boolean
@@ -55,7 +55,7 @@ declare namespace yuki {
   }
 
   export interface LingoesPattern {
-    kana?: Array<String>
+    kana?: string[]
     definitions?: Array<{
       partOfSpeech: string,
       explanations: Array<{
@@ -72,9 +72,12 @@ declare namespace yuki {
     name: string,
     pid: number
   }
+
   export type Processes = Process[]
+
   export interface ProcessWithText extends Process {
     text: string
   }
+
   export type ProcessesWithText = ProcessWithText[]
 }

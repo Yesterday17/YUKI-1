@@ -1,5 +1,6 @@
 import * as fs from 'fs'
 import fetch, { Response } from 'node-fetch'
+
 const Progress = require('node-fetch-progress')
 
 export interface FetchProgress {
@@ -25,9 +26,15 @@ export default class Downloader {
   private progressCallback: (state: FetchProgress) => void | undefined
 
   constructor(private fileUrl: string, private saveToPath: string) {
-    this.progressCallback = () => { return }
-    this.errorCallback = () => { return }
-    this.endCallback = () => { return }
+    this.progressCallback = () => {
+      return
+    }
+    this.errorCallback = () => {
+      return
+    }
+    this.endCallback = () => {
+      return
+    }
   }
 
   public start() {
@@ -36,10 +43,10 @@ export default class Downloader {
     progress.on('progress', (p: FetchProgress) => {
       this.progressCallback(p)
     })
-    this.downloadRequest.then(r => r.blob()).then(blob => {
+    this.downloadRequest.then((r) => r.blob()).then((blob) => {
       fs.createWriteStream(this.saveToPath).write(blob)
       this.endCallback()
-    }).catch(e => {
+    }).catch((e) => {
       this.errorCallback(e)
     })
     return this
@@ -49,10 +56,12 @@ export default class Downloader {
     if (!this.downloadRequest) return
     // TODO
   }
+
   public resume() {
     if (!this.downloadRequest) return
     // TODO
   }
+
   public abort() {
     if (!this.downloadRequest) return
     // TODO
@@ -68,10 +77,12 @@ export default class Downloader {
     this.progressCallback = callback
     return this
   }
+
   public onEnd(callback: () => void) {
     this.endCallback = callback
     return this
   }
+
   public onError(callback: (err: Error) => void) {
     this.errorCallback = callback
     return this

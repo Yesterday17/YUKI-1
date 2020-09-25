@@ -1,9 +1,9 @@
 const debug = require('debug')('yuki:publish')
 
-export default class PublishMiddleware
-  implements yuki.Middleware<yuki.TextOutputObject> {
+export default class PublishMiddleware implements yuki.Middleware<yuki.TextOutputObject> {
   private subscribers: Electron.WebContents[] = []
   private type: string
+
   constructor(type: string) {
     this.type = type
   }

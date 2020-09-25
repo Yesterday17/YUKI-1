@@ -1,12 +1,18 @@
-export = vuetify;
+export = vuetify
+
 declare class vuetify {
-  static install(Vue: any, args: any): void;
-  static installed: boolean;
-  static version: string;
+  public static installed: boolean
+  public static version: string
+
+  public static install(Vue: any, args: any): void
+
+  public framework: any
+  public installed: any
+  public preset: any
+
   constructor(preset: any);
-  framework: any;
-  installed: any;
-  preset: any;
-  init(root: any, ssrContext: any): void;
-  use(Service: any): void;
+
+  public init(root: any, ssrContext: any): void
+
+  public use(Service: any): void
 }

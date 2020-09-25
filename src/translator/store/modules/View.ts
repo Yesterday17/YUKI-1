@@ -9,32 +9,32 @@ const viewState: yuki.TranslatorViewState = {
 }
 
 const mutations = {
-  SET_BUTTONS_SHOWN (
+  SET_BUTTONS_SHOWN(
     state: yuki.TranslatorViewState,
     payload: { value: boolean }
   ) {
     state.isButtonsShown = payload.value
   },
-  SET_WINDOW_TOO_HIGH (
+  SET_WINDOW_TOO_HIGH(
     state: yuki.TranslatorViewState,
     payload: { value: boolean }
   ) {
     state.isWindowTooHigh = payload.value
   },
-  SET_PAUSE_NEW_TEXT (
+  SET_PAUSE_NEW_TEXT(
     state: yuki.TranslatorViewState,
     payload: { value: boolean }
   ) {
     state.pauseNewText = payload.value
   },
-  SET_DICT (
+  SET_DICT(
     state: yuki.TranslatorViewState,
     payload: { value: yuki.DictResult }
   ) {
     state.dict = payload.value
     state.isGetDictResult = true
   },
-  CLEAR_DICT (
+  CLEAR_DICT(
     state: yuki.TranslatorViewState
   ) {
     state.isGetDictResult = false
@@ -42,19 +42,19 @@ const mutations = {
 }
 
 const actions = {
-  setButtonsShown ({ commit }: { commit: Commit }, value: boolean) {
+  setButtonsShown({ commit }: { commit: Commit }, value: boolean) {
     commit('SET_BUTTONS_SHOWN', { value })
   },
-  setWindowTooHigh ({ commit }: { commit: Commit }, value: boolean) {
+  setWindowTooHigh({ commit }: { commit: Commit }, value: boolean) {
     commit('SET_WINDOW_TOO_HIGH', { value })
   },
-  setPauseNewText ({ commit }: { commit: Commit }, value: boolean) {
+  setPauseNewText({ commit }: { commit: Commit }, value: boolean) {
     commit('SET_PAUSE_NEW_TEXT', { value })
   },
-  setDict ({ commit }: { commit: Commit }, value: yuki.DictResult) {
+  setDict({ commit }: { commit: Commit }, value: yuki.DictResult) {
     commit('SET_DICT', { value })
   },
-  clearDict ({ commit }: { commit: Commit }) {
+  clearDict({ commit }: { commit: Commit }) {
     commit('CLEAR_DICT')
   }
 }

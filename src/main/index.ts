@@ -6,6 +6,7 @@ import ConfigManager from './config/ConfigManager'
 import DownloaderFactory from './DownloaderFactory'
 import setupIpc from './setup/Ipc'
 import DictManager from './translate/DictManager'
+
 const debug = require('debug')('yuki:app')
 
 // check & make ./config folder
@@ -46,7 +47,7 @@ const mainWinURL =
 
 debug('mainWinURL: %s', mainWinURL)
 
-function openWindow () {
+function openWindow() {
   if (!mainWindow) {
     createWindow()
   } else if (!mainWindow.isVisible()) {
@@ -54,7 +55,7 @@ function openWindow () {
   }
 }
 
-function createWindow () {
+function createWindow() {
   debug('creating window...')
 
   /**
